@@ -12,20 +12,39 @@ public class HPlay {
 
 		boolean let5 = true;
 		boolean let6 = false;
+		boolean letKeno7 = false;
 
-		String[] texts = { "Inadventent", "Diligence" };
+		String[] texts = { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday", "grammar" };
 
-		play(texts, let5, let6);
+		play(texts, let5, let6, letKeno7);
 
 	}
 
-	private static void play(String[] texts, boolean let5, boolean let6) {
+	private static void play(String[] texts, boolean let5, boolean let6, boolean letKeno7) {
 		for (String t : texts) {
-			if (let5)
-				System.out.println(t + "\t" + "5/45" + "\t" + Arrays.toString(GameSetter.makeGameSet(5, 45, t)));
-			if (let6)
-				System.out.println(t + "\t" + "6/52" + "\t" + Arrays.toString(GameSetter.makeGameSet(6, 52, t)));
+			if (let5) {
+				String comb = Arrays.toString(GameSetter.makeGameSet(5, 45, t));
+				System.out.println("5/45" + "\t" + comb + spaceTip(comb, 5) + "\t" + t);
+			}
+			if (let6) {
+				String comb = Arrays.toString(GameSetter.makeGameSet(6, 52, t));
+				System.out.println("6/52" + "\t" + comb + spaceTip(comb, 6) + "\t" + t);
+			}
+			if (letKeno7) {
+				String comb = Arrays.toString(GameSetter.makeGameSet(7, 80, t));
+				System.out.println("7/80" + "\t" + comb + spaceTip(comb, 7) + "\t" + t);
+			}
 		}
+	}
+
+	private static String spaceTip(String text, int lenCoef) {
+		StringBuilder sb = new StringBuilder();
+		int preLen = 4 * lenCoef + 2;
+		int len = preLen - text.length();
+		for (int i = len; i > 0; i--) {
+			sb.append(" ");
+		}
+		return sb.toString();
 	}
 
 	private static void hasher(boolean letHasher) {

@@ -8,10 +8,13 @@ public class GameSetter {
 	}
 
 	public static int[] makeGameSet(int balls, int ballSet, String seeds) {
+		
+		int deep = 4;
+		int repetition = 2 * ballSet;
+		
 		int[] preCombination = new int[balls];
 		int[] combination = new int[balls];
-		int deep = 4;
-
+		
 		String a = HashCoder.makeLettered(seeds, deep * balls);
 
 		for (int i = 0; i < balls; i++) {
@@ -23,11 +26,11 @@ public class GameSetter {
 		for (int i = 0; i < balls; i++) {
 			int counter = 0;
 			do {
-				if (++counter > 5) {
+				if (++counter > repetition) {
 					break;
 				}
 				preCombination[i] *= 3;
-				combination[i] = 1 + preCombination[i] % ballSet;
+				combination[i] = counter + preCombination[i] % ballSet;
 			} while (checkRepetition(combination));
 		}
 
