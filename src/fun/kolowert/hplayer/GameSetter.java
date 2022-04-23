@@ -6,7 +6,14 @@ public class GameSetter {
 
 	private GameSetter() {
 	}
-
+	
+	public static class Inner {
+		private Inner() {}
+		public static String reportJob(int balls, int ballSet, String seeds) {
+			return Arrays.toString(makeGameSet(balls, ballSet, seeds));
+		}
+	}
+	
 	public static int[] makeGameSet(int balls, int ballSet, String seeds) {
 		
 		int deep = 4;
@@ -49,5 +56,5 @@ public class GameSetter {
 		}
 		return false;
 	}
-
+	
 }
