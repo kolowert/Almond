@@ -3,7 +3,9 @@ package fun.kolowert.hplayer;
 import java.util.Arrays;
 
 public class GameSetter {
-
+	
+	private static final Coder coder = new Sha256Coder();
+	
 	private GameSetter() {
 	}
 	
@@ -22,7 +24,7 @@ public class GameSetter {
 		int[] preCombination = new int[balls];
 		int[] combination = new int[balls];
 		
-		String a = HashCoder.makeLettered(seeds, deep * balls);
+		String a = coder.makeLettered(seeds, deep * balls);
 
 		for (int i = 0; i < balls; i++) {
 			for (int j = 0; j < deep; j++) {

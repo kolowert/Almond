@@ -18,30 +18,6 @@ public class HPlay {
 
 		play(texts, let5, let6, letKeno8);
 
-		experimental(texts, true);
-
-	}
-
-	private static void experimental(String[] texts, boolean doIt) {
-		if (doIt) {
-			Runtime runtime = Runtime.getRuntime();
-			System.out.println("\nruntime: " + runtime);
-			System.out.println("availableProcessors: " + runtime.availableProcessors());
-
-			System.out.println("\nexperimental");
-			System.out.println(texts.toString());
-			System.out.println(texts.getClass());
-
-			String abc = "qwe";
-			System.out.println(abc);
-			System.out.println(abc.toString());
-			System.out.println(abc.getClass());
-
-			System.out.println(texts instanceof String[]);
-
-			String reportedJob = GameSetter.Inner.reportJob(5, 45, texts[0]);
-			System.out.println(reportedJob);
-		}
 	}
 
 	private static void play(String[] texts, boolean let5, boolean let6, boolean letKeno) {
@@ -81,8 +57,8 @@ public class HPlay {
 		String[] aTexts = { "a", "b", "c", "abc", "bcd", "premises", "abra kadabra boom", "abra kadAbra boom",
 				"aaaaaaaa", "aaaaaaab", "Francesca", "Francesco", "00000000", "London", "Montreal", "Austin Texax US",
 				"London is the capital and largest city of England and the United Kingdom. It stands on the River "
-				+ "Thames in south-east England at the head of a 50-mile (80 km) estuary down to the North Sea, and "
-				+ "has been a major settlement for two millennia.",
+						+ "Thames in south-east England at the head of a 50-mile (80 km) estuary down to the North Sea, and "
+						+ "has been a major settlement for two millennia.",
 				"Lviv", "Yavoriv", "Cieszyn", "Berlin", "Munich", "urvouwhvou", "uvouqeihfih", "UTRUYGLHO",
 				"WYUOPYRS", "Rozbahatity", "Lila", "Rich", "Rich Lila", "Happy Olga",
 				"We are the champions my friends", "We are the champions my friends!", "japanese threesome", "Monday",
@@ -94,9 +70,10 @@ public class HPlay {
 		Object[] allTexts = { aTexts, bTexts, new String[] { "Bay, Boat, Car, House, Airplane, Saile Ship",
 				"Bay Boat Car House Airplane Saile Ship" } };
 
+		HashCoder hashCoder = new HashCoder();
 		for (Object s : allTexts) {
 			for (String t : (String[]) s) {
-				System.out.println(t + " >> " + HashCoder.makeLettered(t, len) + " >> " + HashCoder.makeInteger(t));
+				System.out.println(t + " >> " + hashCoder.makeLettered(t, len) + " >> " + hashCoder.makeInteger(t));
 			}
 		}
 	}

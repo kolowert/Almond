@@ -1,18 +1,15 @@
 package fun.kolowert.hplayer;
 
-public class HashCoder {
+public class HashCoder implements Coder {
 
 	private static final String SALT = "NhYrLkNgUwIaSoLpFnHyRlKxGuWiAsOmPNDzCcbHRdlscKExxLDKGupEykqQXDBH";
 	private static final String LINE = "$&0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
-	private HashCoder() {
-	}
-
-	public static int makeInteger(String input) {
+	public int makeInteger(String input) {
 		return makeLettered(input, 16).hashCode();
 	}
 
-	public static String makeLettered(String input, int outputLength) {
+	public String makeLettered(String input, int outputLength) {
 		String salted = HashCoder.mixWithSalt(input, outputLength);
 		String transponded1 = HashCoder.transpondOnLine(salted);
 		String shifted1 = HashCoder.innerShift(transponded1);
