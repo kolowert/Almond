@@ -72,7 +72,9 @@ public class Cloner implements Cloneable, Serializable {
 
 	@Override
 	public Object clone() throws CloneNotSupportedException {
+		
 		Cloner clonned = null;
+		
 		try {
 			ByteArrayOutputStream bos;
 			ObjectOutputStream ous;
@@ -90,6 +92,7 @@ public class Cloner implements Cloneable, Serializable {
 		} catch (IOException | ClassNotFoundException e) {
 			e.printStackTrace();
 		}
+		
 		return clonned;
 	}
 

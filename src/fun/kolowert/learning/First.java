@@ -5,7 +5,11 @@ public class First extends AbsFirst implements Selectable {
 	private int id;
 	private String name;
 	private boolean isSelected;
-
+	
+	public First() {
+		
+	}
+	
 	public First(int id, String name, boolean isSelected) {
 		this.id = id;
 		this.name = name;

@@ -14,7 +14,7 @@ public class HPlay {
 		boolean let6 = false;
 		boolean letKeno8 = false;
 
-		String[] texts = { "Hyundai i10", "Renault Grand Modus", "Fiat Grande Punto" };
+		String[] texts = { "Ford Fusion +", "Ford Fusion" };
 
 		play(texts, let5, let6, letKeno8);
 
@@ -80,7 +80,9 @@ public class HPlay {
 
 		String[] aTexts = { "a", "b", "c", "abc", "bcd", "premises", "abra kadabra boom", "abra kadAbra boom",
 				"aaaaaaaa", "aaaaaaab", "Francesca", "Francesco", "00000000", "London", "Montreal", "Austin Texax US",
-				"London is the capital and largest city of England and the United Kingdom. It stands on the River Thames in south-east England at the head of a 50-mile (80 km) estuary down to the North Sea, and has been a major settlement for two millennia.",
+				"London is the capital and largest city of England and the United Kingdom. It stands on the River "
+				+ "Thames in south-east England at the head of a 50-mile (80 km) estuary down to the North Sea, and "
+				+ "has been a major settlement for two millennia.",
 				"Lviv", "Yavoriv", "Cieszyn", "Berlin", "Munich", "urvouwhvou", "uvouqeihfih", "UTRUYGLHO",
 				"WYUOPYRS", "Rozbahatity", "Lila", "Rich", "Rich Lila", "Happy Olga",
 				"We are the champions my friends", "We are the champions my friends!", "japanese threesome", "Monday",
