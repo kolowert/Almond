@@ -18,6 +18,8 @@ public class HPlay {
 
 		play(texts, let5, let6, letKeno8);
 
+		hasher(true);
+
 	}
 
 	private static void play(String[] texts, boolean let5, boolean let6, boolean letKeno) {
@@ -52,8 +54,6 @@ public class HPlay {
 		if (!letHasher)
 			return;
 
-		int len = 8;
-
 		String[] aTexts = { "a", "b", "c", "abc", "bcd", "premises", "abra kadabra boom", "abra kadAbra boom",
 				"aaaaaaaa", "aaaaaaab", "Francesca", "Francesco", "00000000", "London", "Montreal", "Austin Texax US",
 				"London is the capital and largest city of England and the United Kingdom. It stands on the River "
@@ -65,17 +65,21 @@ public class HPlay {
 				"Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday", "grammar" };
 
 		String[] bTexts = { "Fiat Grande Punto", "Mitsubishi Space Star", "Opel Meriva", "Skoda Roomster",
-				"Skoda Yeti", "Kia Soul", "Garage" };
+				"Skoda Yeti", "Kia Soul", "Ford Fusion +", "Ford Fusion", "Garage" };
 
 		Object[] allTexts = { aTexts, bTexts, new String[] { "Bay, Boat, Car, House, Airplane, Saile Ship",
 				"Bay Boat Car House Airplane Saile Ship" } };
-
-		HashCoder hashCoder = new HashCoder();
+		
+		System.out.println("\n----");
+		System.out.println("type\t< com  bi  na  ti  on  >  [ an  al   y   z   i   s ]  seeding text\n");
 		for (Object s : allTexts) {
 			for (String t : (String[]) s) {
-				System.out.println(t + " >> " + hashCoder.makeLettered(t, len) + " >> " + hashCoder.makeInteger(t));
+				int[] gameSet = GameSetter.makeGameSet(5, 45, t);
+				String setReport = new HistAnalizer().reportMatches(gameSet);
+				System.out.println("5/45" + "\t" + Serv.normalizeArray(gameSet) + "  " + setReport + "  " + t);
 			}
 		}
+
 	}
 
 }
