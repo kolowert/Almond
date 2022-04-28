@@ -16,16 +16,18 @@ public class HistAnalizer {
 	 * combinations It takes history combinations from file in resources folder
 	 * 
 	 * @param ballSet to analyze
+	 * @param histDeep -> deep in history to analyze
 	 * @return string report (like array of integers) with matches for 0, 1, 2, 3, 4
 	 *         and more balls (depends on gameType)
 	 */
-	public String reportMatches(int[] ballSet) {
+	public String reportMatches(int[] ballSet, int histDeep) {
 
 		List<String> hist = new FileHand(path).read();
 
-		List<int[]> histCombinations = convertToCombinations(hist);
+		List<int[]> histCombinations = convertToCombinations(hist, histDeep);
 
-		int[] analizResult = new int[1 + histCombinations.get(0).length];
+		int[] analizResult = new int[1 + ballSet.length];
+		
 		for (int[] comb : histCombinations) {
 			int matches = countMatches(ballSet, comb);
 			analizResult[matches] += 1;
@@ -46,20 +48,21 @@ public class HistAnalizer {
 		return counter;
 	}
 
-	private List<int[]> convertToCombinations(List<String> hist) {
+	private List<int[]> convertToCombinations(List<String> hist, int deep) {
 
 		List<int[]> result = new ArrayList<>();
-
-		for (String line : hist) {
+		
+		for (int i = hist.size() - 1, counter = 0; i >= 0 && counter < deep; i--, counter++) {
+			String line = hist.get(i);
 			String[] parts = line.split(",");
 			int len = parts.length - 4;
 			int[] arr = new int[len];
 
-			for (int i = 0; i < len; i++) {
+			for (int j = 0; j < len; j++) {
 				try {
-					arr[i] = Integer.parseInt(parts[i + 4]);
+					arr[j] = Integer.parseInt(parts[j + 4]);
 				} catch (NumberFormatException e) {
-					arr[i] = 0;
+					arr[j] = 0;
 				}
 			}
 
@@ -71,6 +74,6 @@ public class HistAnalizer {
 
 	public static void main(String[] args) {
 		System.out.println("Hello from HistAnalizer");
-		System.out.println(new HistAnalizer(GameType.SUPER).reportMatches(new int[] { 1, 2, 3, 4, 5 }));
+		System.out.println(new HistAnalizer(GameType.SUPER).reportMatches(new int[] { 1, 2, 3, 4, 5 }, 10));
 	}
 }

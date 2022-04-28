@@ -39,7 +39,7 @@ public enum GameType {
 	},
 	
 	KENO {
-		private static final int COMBSET_SIZE = 10;
+		private static final int COMBSET_SIZE = 6;
 		private static final int PLAYSET_SIZE = 20;
 		private static final int GAMESET_SIZE = 80;
 		public int getCombSetSize() {

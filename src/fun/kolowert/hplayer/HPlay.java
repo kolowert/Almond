@@ -3,7 +3,8 @@ package fun.kolowert.hplayer;
 import java.util.Arrays;
 
 public class HPlay {
-
+	
+	private static final int HIST_DEEP = 30;
 	private static final GameType GAMETYPE = GameType.KENO;
 	private static final CoderType CODERTYPE = CoderType.SHA265;
 	private static final String[] SEEDS = { "Ford Fusion +", "Skoda Roomster" };
@@ -81,7 +82,7 @@ public class HPlay {
 		for (Object s : allTexts) {
 			for (String t : (String[]) s) {
 				int[] playCombination = gameSetter.makeGameSet(combSetSize, gameSetSize, t);
-				String matchingReport = new HistAnalizer(GAMETYPE).reportMatches(playCombination);
+				String matchingReport = new HistAnalizer(GAMETYPE).reportMatches(playCombination, HIST_DEEP);
 				String labe = "" + combSetSize + "/" + gameSetSize;
 				System.out.println(
 						labe + "\t" + Serv.normalizeArray(playCombination) + "  " + matchingReport + "  " + t);
