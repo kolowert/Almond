@@ -1,21 +1,21 @@
 package fun.kolowert.hplayer;
 
-public class HashCoder implements Coder {
+public class CoderKolo64 implements Coder {
 
-	private static final String SALT = "NhYrLkNgUwIaSoLpFnHyRlKxGuWiAsOmPNDzCcbHRdlscKExxLDKGupEykqQXDBH";
-	private static final String LINE = "$&0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+	private static final String SALT = "ThEqUiCkBrOwNfxJuMpSoVeRtHLaZyDGQIcKbWnFXjmPsvlAzYdg 0123456789!";
+	private static final String LINE = "!$0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
 	public int makeInteger(String input) {
 		return makeLettered(input, 16).hashCode();
 	}
 
 	public String makeLettered(String input, int outputLength) {
-		String salted = HashCoder.mixWithSalt(input, outputLength);
-		String transponded1 = HashCoder.transpondOnLine(salted);
-		String shifted1 = HashCoder.innerShift(transponded1);
-		String transponded2 = HashCoder.transpondOnLine(shifted1);
-		String shifted2 = HashCoder.innerShift(transponded2);
-		return HashCoder.truncate(shifted2, outputLength);
+		String salted = CoderKolo64.mixWithSalt(input, outputLength);
+		String transponded1 = CoderKolo64.transpondOnLine(salted);
+		String shifted1 = CoderKolo64.innerShift(transponded1);
+		String transponded2 = CoderKolo64.transpondOnLine(shifted1);
+		String shifted2 = CoderKolo64.innerShift(transponded2);
+		return CoderKolo64.truncate(shifted2, outputLength);
 	}
 
 	public static String innerShift(String input) {

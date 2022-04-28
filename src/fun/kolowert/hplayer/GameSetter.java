@@ -4,19 +4,28 @@ import java.util.Arrays;
 
 public class GameSetter {
 	
-	private static final Coder coder = new Sha256Coder();
+	private Coder coder;
 	
-	private GameSetter() {
+	public GameSetter() {
+		coder = new Coder256Sha();
 	}
 	
-	public static class Inner {
+	public GameSetter(Coders c) {
+		if (c == Coders.KOLO64) {
+			coder = new CoderKolo64();
+		} else {
+			coder = new Coder256Sha();
+		}
+	}
+	
+	public class Inner {
 		private Inner() {}
-		public static String reportJob(int balls, int ballSet, String seeds) {
+		public String reportJob(int balls, int ballSet, String seeds) {
 			return Arrays.toString(makeGameSet(balls, ballSet, seeds));
 		}
 	}
 	
-	public static int[] makeGameSet(int balls, int ballSet, String seeds) {
+	public int[] makeGameSet(int balls, int ballSet, String seeds) {
 		
 		int deep = 4;
 		int repetition = 2 * ballSet;
@@ -48,7 +57,7 @@ public class GameSetter {
 		return combination;
 	}
 
-	private static boolean checkRepetition(int[] combination) {
+	private boolean checkRepetition(int[] combination) {
 		for (int i = 1; i < combination.length; i++) {
 			for (int j = 0; j < i; j++) {
 				if (combination[i] != 0 && combination[i] == combination[j]) {

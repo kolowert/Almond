@@ -6,34 +6,32 @@ public class HPlay {
 
 	public static void main(String[] args) {
 
-		boolean letHasher = false;
-
-		hasher(letHasher);
-
 		boolean let5 = true;
 		boolean let6 = false;
 		boolean letKeno8 = false;
+		GameSetter gameSetter = new GameSetter(Coders.SHA265);
 
 		String[] texts = { "Ford Fusion +", "Ford Fusion" };
 
-		play(texts, let5, let6, letKeno8);
+		play(texts, let5, let6, letKeno8, gameSetter);
 
-		hasher(true);
+		hasher(true, gameSetter);
 
 	}
 
-	private static void play(String[] texts, boolean let5, boolean let6, boolean letKeno) {
+	private static void play(String[] texts, boolean let5, boolean let6, boolean letKeno, GameSetter gameSetter) {
+		
 		for (String t : texts) {
 			if (let5) {
-				String comb = Arrays.toString(GameSetter.makeGameSet(5, 45, t));
+				String comb = Arrays.toString(gameSetter.makeGameSet(5, 45, t));
 				System.out.println("5/45" + "\t" + comb + spaceTip(comb, 5) + "\t" + t);
 			}
 			if (let6) {
-				String comb = Arrays.toString(GameSetter.makeGameSet(6, 52, t));
+				String comb = Arrays.toString(gameSetter.makeGameSet(6, 52, t));
 				System.out.println("6/52" + "\t" + comb + spaceTip(comb, 6) + "\t" + t);
 			}
 			if (letKeno) {
-				String comb = Arrays.toString(GameSetter.makeGameSet(8, 80, t));
+				String comb = Arrays.toString(gameSetter.makeGameSet(8, 80, t));
 				System.out.println("8/80" + "\t" + comb + spaceTip(comb, 8) + "\t" + t);
 			}
 		}
@@ -49,7 +47,7 @@ public class HPlay {
 		return sb.toString();
 	}
 
-	private static void hasher(boolean letHasher) {
+	private static void hasher(boolean letHasher, GameSetter gameSetter) {
 
 		if (!letHasher)
 			return;
@@ -74,7 +72,7 @@ public class HPlay {
 		System.out.println("type\t< com  bi  na  ti  on  >  [ an  al   y   z   i   s ]  seeding text\n");
 		for (Object s : allTexts) {
 			for (String t : (String[]) s) {
-				int[] gameSet = GameSetter.makeGameSet(5, 45, t);
+				int[] gameSet = gameSetter.makeGameSet(5, 45, t);
 				String setReport = new HistAnalizer().reportMatches(gameSet);
 				System.out.println("5/45" + "\t" + Serv.normalizeArray(gameSet) + "  " + setReport + "  " + t);
 			}

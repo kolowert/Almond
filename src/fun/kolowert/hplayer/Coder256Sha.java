@@ -4,7 +4,7 @@ import java.nio.charset.StandardCharsets;
 
 import com.google.common.hash.Hashing;
 
-public class Sha256Coder implements Coder {
+public class Coder256Sha implements Coder {
 	
 	private static final String LINE = "!$0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
 
