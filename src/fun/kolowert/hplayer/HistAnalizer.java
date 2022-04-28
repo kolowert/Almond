@@ -17,7 +17,7 @@ public class HistAnalizer {
 	 * 
 	 * @param ballSet to analyze
 	 * @return string report (like array of integers) with matches for 0, 1, 2, 3, 4
-	 *         and 5 balls
+	 *         and more balls (depends on gameType)
 	 */
 	public String reportMatches(int[] ballSet) {
 
@@ -25,7 +25,7 @@ public class HistAnalizer {
 
 		List<int[]> histCombinations = convertToCombinations(hist);
 
-		int[] analizResult = new int[6];
+		int[] analizResult = new int[1 + histCombinations.get(0).length];
 		for (int[] comb : histCombinations) {
 			int matches = countMatches(ballSet, comb);
 			analizResult[matches] += 1;
@@ -47,24 +47,30 @@ public class HistAnalizer {
 	}
 
 	private List<int[]> convertToCombinations(List<String> hist) {
+
 		List<int[]> result = new ArrayList<>();
+
 		for (String line : hist) {
 			String[] parts = line.split(",");
-			int[] arr = new int[5];
-			for (int i = 0; i < 5; i++) {
+			int len = parts.length - 4;
+			int[] arr = new int[len];
+
+			for (int i = 0; i < len; i++) {
 				try {
 					arr[i] = Integer.parseInt(parts[i + 4]);
 				} catch (NumberFormatException e) {
 					arr[i] = 0;
 				}
 			}
+
 			result.add(arr);
 		}
+
 		return result;
 	}
 
 	public static void main(String[] args) {
 		System.out.println("Hello from HistAnalizer");
-		System.out.println(new HistAnalizer(GameType.MAXI).reportMatches(new int[] { 1, 2, 3, 4, 5 }));
+		System.out.println(new HistAnalizer(GameType.SUPER).reportMatches(new int[] { 1, 2, 3, 4, 5 }));
 	}
 }

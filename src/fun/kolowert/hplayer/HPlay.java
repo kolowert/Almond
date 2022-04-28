@@ -4,38 +4,41 @@ import java.util.Arrays;
 
 public class HPlay {
 
+	private static final GameType GAMETYPE = GameType.KENO;
+	private static final CoderType CODERTYPE = CoderType.SHA265;
+	private static final String[] SEEDS = { "Ford Fusion +", "Skoda Roomster" };
+	
+	private int combSetSize;
+	private int playSetSize;
+	private int gameSetSize;
+
+	private GameSetter gameSetter;
+
+	public HPlay() {
+		gameSetter = new GameSetter(CODERTYPE);
+		combSetSize = GAMETYPE.getCombSetSize();
+		playSetSize = GAMETYPE.getPlaySetSize();
+		gameSetSize = GAMETYPE.getGameSetSize();
+	}
+
 	public static void main(String[] args) {
-		
-		// parameters
-		boolean let5 = true;
-		boolean let6 = false;
-		boolean letKeno8 = false;
-		GameType gameType = GameType.MAXI;
-		GameSetter gameSetter = new GameSetter(Coders.SHA265);
 
-		String[] texts = { "Ford Fusion +", "Ford Fusion", "Skoda Roomster Greenline" };
+		HPlay hPlay = new HPlay();
 
-		play(texts, let5, let6, letKeno8, gameSetter);
+		hPlay.play();
 
-		hasher(true, gameSetter, gameType);
+		hPlay.hasher(true);
 
 	}
 
-	private static void play(String[] texts, boolean let5, boolean let6, boolean letKeno, GameSetter gameSetter) {
+	private void play() {
 
-		for (String t : texts) {
-			if (let5) {
-				String comb = Arrays.toString(gameSetter.makeGameSet(5, 45, t));
-				System.out.println("5/45" + "\t" + comb + spaceTip(comb, 5) + "\t" + t);
-			}
-			if (let6) {
-				String comb = Arrays.toString(gameSetter.makeGameSet(6, 52, t));
-				System.out.println("6/52" + "\t" + comb + spaceTip(comb, 6) + "\t" + t);
-			}
-			if (letKeno) {
-				String comb = Arrays.toString(gameSetter.makeGameSet(8, 80, t));
-				System.out.println("8/80" + "\t" + comb + spaceTip(comb, 8) + "\t" + t);
-			}
+		for (String seed : SEEDS) {
+
+			String comb = Arrays.toString(gameSetter.makeGameSet(combSetSize, gameSetSize, seed));
+			String labe = "" + playSetSize + "/" + gameSetSize;
+			System.out.println(labe + "\t" + comb + spaceTip(comb, combSetSize) + "\t" + seed);
+
 		}
 	}
 
@@ -49,7 +52,7 @@ public class HPlay {
 		return sb.toString();
 	}
 
-	private static void hasher(boolean letHasher, GameSetter gameSetter, GameType gameType) {
+	private void hasher(boolean letHasher) {
 
 		if (!letHasher)
 			return;
@@ -77,9 +80,11 @@ public class HPlay {
 		System.out.println("type\t< com  bi  na  ti  on  >  [ an  al   y   z   i   s ]  seeding text\n");
 		for (Object s : allTexts) {
 			for (String t : (String[]) s) {
-				int[] gameSet = gameSetter.makeGameSet(5, 45, t);
-				String matchingReport = new HistAnalizer(gameType).reportMatches(gameSet);
-				System.out.println("5/45" + "\t" + Serv.normalizeArray(gameSet) + "  " + matchingReport + "  " + t);
+				int[] playCombination = gameSetter.makeGameSet(combSetSize, gameSetSize, t);
+				String matchingReport = new HistAnalizer(GAMETYPE).reportMatches(playCombination);
+				String labe = "" + combSetSize + "/" + gameSetSize;
+				System.out.println(
+						labe + "\t" + Serv.normalizeArray(playCombination) + "  " + matchingReport + "  " + t);
 			}
 		}
 

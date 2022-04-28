@@ -10,8 +10,8 @@ public class GameSetter {
 		coder = new Coder256Sha();
 	}
 
-	public GameSetter(Coders c) {
-		if (c == Coders.KOLO64) {
+	public GameSetter(CoderType c) {
+		if (c == CoderType.KOLO64) {
 			coder = new CoderKolo64();
 		} else {
 			coder = new Coder256Sha();

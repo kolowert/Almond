@@ -1,6 +1,6 @@
 package fun.kolowert.hplayer;
 
-public enum Coders {
+public enum CoderType {
 	SHA265,
 	KOLO64
 }

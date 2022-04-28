@@ -24,7 +24,11 @@ public class Coder256Sha implements Coder {
 		StringBuilder sb = new StringBuilder(len);
 		int odd = 2 * findOdd(input);
 		for (int i = 0; i < len; i++) {
-			odd -= input.charAt(i);
+			int poz = i;
+			if (i >= input.length()) {
+				poz = i % input.length();
+			}
+			odd -= input.charAt(poz);
 			sb.append(LINE.charAt(odd % LINE.length()));
 		}
 		return sb.toString();
