@@ -1,25 +1,23 @@
 package fun.kolowert.hplayer;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class HistAnalizer {
 
-	private static final String PATH_TIP = "maxi";
-	private static final String PATH_TAIL = ".txt";
-
 	private String path = "resources/hist/";
 
-	{
-		path += PATH_TIP + PATH_TAIL;
+	public HistAnalizer(GameType gameType) {
+		path += gameType.histFile();
 	}
-	
+
 	/**
-	 * It count matches balls in combination from parameter and balls in history combinations
-	 * It takes history combinations from file in resources folder 
+	 * It count matches balls in combination from parameter and balls in history
+	 * combinations It takes history combinations from file in resources folder
+	 * 
 	 * @param ballSet to analyze
-	 * @return string report (like array of integers) with matches for 0, 1, 2, 3, 4 and 5 balls
+	 * @return string report (like array of integers) with matches for 0, 1, 2, 3, 4
+	 *         and 5 balls
 	 */
 	public String reportMatches(int[] ballSet) {
 
@@ -32,11 +30,6 @@ public class HistAnalizer {
 			int matches = countMatches(ballSet, comb);
 			analizResult[matches] += 1;
 		}
-
-		// debug
-//		for (int[] comb : histCombinations) {
-//			System.out.println(Arrays.toString(comb));
-//		}
 
 		return Serv.normalizeArray(analizResult, "[", "]");
 	}
@@ -72,6 +65,6 @@ public class HistAnalizer {
 
 	public static void main(String[] args) {
 		System.out.println("Hello from HistAnalizer");
-		System.out.println(new HistAnalizer().reportMatches(new int[] { 1, 2, 3, 4, 5 }));
+		System.out.println(new HistAnalizer(GameType.MAXI).reportMatches(new int[] { 1, 2, 3, 4, 5 }));
 	}
 }

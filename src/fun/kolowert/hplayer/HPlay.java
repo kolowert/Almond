@@ -5,22 +5,24 @@ import java.util.Arrays;
 public class HPlay {
 
 	public static void main(String[] args) {
-
+		
+		// parameters
 		boolean let5 = true;
 		boolean let6 = false;
 		boolean letKeno8 = false;
+		GameType gameType = GameType.MAXI;
 		GameSetter gameSetter = new GameSetter(Coders.SHA265);
 
-		String[] texts = { "Ford Fusion +", "Ford Fusion" };
+		String[] texts = { "Ford Fusion +", "Ford Fusion", "Skoda Roomster Greenline" };
 
 		play(texts, let5, let6, letKeno8, gameSetter);
 
-		hasher(true, gameSetter);
+		hasher(true, gameSetter, gameType);
 
 	}
 
 	private static void play(String[] texts, boolean let5, boolean let6, boolean letKeno, GameSetter gameSetter) {
-		
+
 		for (String t : texts) {
 			if (let5) {
 				String comb = Arrays.toString(gameSetter.makeGameSet(5, 45, t));
@@ -47,7 +49,7 @@ public class HPlay {
 		return sb.toString();
 	}
 
-	private static void hasher(boolean letHasher, GameSetter gameSetter) {
+	private static void hasher(boolean letHasher, GameSetter gameSetter, GameType gameType) {
 
 		if (!letHasher)
 			return;
@@ -58,23 +60,26 @@ public class HPlay {
 						+ "Thames in south-east England at the head of a 50-mile (80 km) estuary down to the North Sea, and "
 						+ "has been a major settlement for two millennia.",
 				"Lviv", "Yavoriv", "Cieszyn", "Berlin", "Munich", "urvouwhvou", "uvouqeihfih", "UTRUYGLHO",
-				"WYUOPYRS", "Rozbahatity", "Lila", "Rich", "Rich Lila", "Happy Olga",
+				"WYUOPYRS", "Rozbahatity", "Lila", "Rich", "Rich Lila", "Happy Olga", "Horny Natalie",
 				"We are the champions my friends", "We are the champions my friends!", "japanese threesome", "Monday",
-				"Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday", "grammar" };
+				"Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday", "Grammar" };
 
-		String[] bTexts = { "Fiat Grande Punto", "Mitsubishi Space Star", "Opel Meriva", "Skoda Roomster",
-				"Skoda Yeti", "Kia Soul", "Ford Fusion +", "Ford Fusion", "Garage" };
+		String[] bTexts = { "Garage", "Fiat Grande Punto", "Mitsubishi Space Star", "Opel Meriva", "Skoda Roomster S",
+				"Skoda Roomster Greenline", "Skoda Roomster SE", "Skoda Yeti", "Kia Soul", "Ford Fusion +",
+				"Ford Fusion" };
 
-		Object[] allTexts = { aTexts, bTexts, new String[] { "Bay, Boat, Car, House, Airplane, Saile Ship",
-				"Bay Boat Car House Airplane Saile Ship" } };
-		
+		Object[] allTexts = { aTexts, bTexts,
+				new String[] { "Bay, Boat, Car, House, Airplane, Saile Ship",
+						"Bay Boat Car House Airplane Saile Ship", "Fuck the System",
+						"The quick brown fox jumps over the lazy dog" } };
+
 		System.out.println("\n----");
 		System.out.println("type\t< com  bi  na  ti  on  >  [ an  al   y   z   i   s ]  seeding text\n");
 		for (Object s : allTexts) {
 			for (String t : (String[]) s) {
 				int[] gameSet = gameSetter.makeGameSet(5, 45, t);
-				String setReport = new HistAnalizer().reportMatches(gameSet);
-				System.out.println("5/45" + "\t" + Serv.normalizeArray(gameSet) + "  " + setReport + "  " + t);
+				String matchingReport = new HistAnalizer(gameType).reportMatches(gameSet);
+				System.out.println("5/45" + "\t" + Serv.normalizeArray(gameSet) + "  " + matchingReport + "  " + t);
 			}
 		}
 

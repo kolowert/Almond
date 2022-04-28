@@ -3,13 +3,13 @@ package fun.kolowert.hplayer;
 import java.util.Arrays;
 
 public class GameSetter {
-	
+
 	private Coder coder;
-	
+
 	public GameSetter() {
 		coder = new Coder256Sha();
 	}
-	
+
 	public GameSetter(Coders c) {
 		if (c == Coders.KOLO64) {
 			coder = new CoderKolo64();
@@ -17,22 +17,15 @@ public class GameSetter {
 			coder = new Coder256Sha();
 		}
 	}
-	
-	public class Inner {
-		private Inner() {}
-		public String reportJob(int balls, int ballSet, String seeds) {
-			return Arrays.toString(makeGameSet(balls, ballSet, seeds));
-		}
-	}
-	
+
 	public int[] makeGameSet(int balls, int ballSet, String seeds) {
-		
+
 		int deep = 4;
 		int repetition = 2 * ballSet;
-		
+
 		int[] preCombination = new int[balls];
 		int[] combination = new int[balls];
-		
+
 		String a = coder.makeLettered(seeds, deep * balls);
 
 		for (int i = 0; i < balls; i++) {
@@ -67,5 +60,5 @@ public class GameSetter {
 		}
 		return false;
 	}
-	
+
 }
