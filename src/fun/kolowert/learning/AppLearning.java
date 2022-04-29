@@ -1,49 +1,81 @@
 package fun.kolowert.learning;
 
 import java.lang.reflect.AnnotatedType;
+import java.lang.reflect.Field;
+import java.util.Properties;
 
 public class AppLearning {
 
-	public static void main(String[] args) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+	public static void main(String[] args)
+			throws ClassNotFoundException, InstantiationException, IllegalAccessException {
 
 		AppLearning learning = new AppLearning();
 
 		learning.playInheritance(false);
 
-		learning.playClass(true);
+		learning.playClass(false);
+
+		learning.playString(true);
 
 	}
 
-	private void playClass(boolean doit) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+	private void playString(boolean doit) {
 		if (!doit)
 			return;
+
+		String s1 = "Hello world";
+		String s2 = "Hello world";
+		String s3 = new String("Hello world");
+		String s4 = new String(s1);
+
+		System.out.println("String`s equally = " + (s1.equals(s2)));
+		System.out.println("s1 and s2 are the same = " + (s1 == s2));
+		System.out.println("s1 and s3 are the same = " + (s1 == s3));
+		System.out.println("s1 and s4 are the same = " + (s1 == s4));
 		
+		Properties properties = System.getProperties();
+		String prop = properties.toString();
+		System.out.println("\nSystem Properties");
+		System.out.println(prop.replace(", ", ",\n").replace(";", ";\n\t"));
+	}
+
+	private void playClass(boolean doit)
+			throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+		if (!doit)
+			return;
+
 		Selectable selectable = new First(1, "Name of Selectable", true);
-		
+
 		AnnotatedType annotatedSuperclassSelectable = selectable.getClass().getAnnotatedSuperclass();
 		System.out.println("annotatedSuperclassSelectable " + annotatedSuperclassSelectable);
-		
+
 		First first = new First(1, "Name of First", true);
 		AnnotatedType annotatedSuperclassFirst = first.getClass().getAnnotatedSuperclass();
 		System.out.println("annotatedSuperclassFirst " + annotatedSuperclassFirst);
-		
+
 		AnnotatedType[] annotatedInterfaces = first.getClass().getAnnotatedInterfaces();
 		for (AnnotatedType at : annotatedInterfaces) {
 			System.out.println("at: " + at.getClass().getTypeName());
 		}
-		
-		System.out.println(first.getClass().getCanonicalName());
+
+		System.out.println("first.getClass().getCanonicalName() -> " + first.getClass().getCanonicalName());
 		Class<First> forNameFirst = (Class<First>) Class.forName("fun.kolowert.learning.First");
-		System.out.println(forNameFirst.newInstance().toString());
+		System.out.println("forNameFirst.newInstance() : " + forNameFirst.newInstance().toString());
+
+		Field[] fields = first.getClass().getFields();
+		System.out.println("fields: " + fields + "  size: " + fields.length);
+		for (Field f : fields) {
+			System.out.println("~~~");
+			System.out.println("f: " + f.toString());
+		}
 	}
-	
+
 	/**
 	 * playInheritance
 	 */
 	private void playInheritance(boolean doit) {
-		if (!doit) {
+		if (!doit)
 			return;
-		}
 
 		System.out.println("~ playInheritance#AppLearning");
 

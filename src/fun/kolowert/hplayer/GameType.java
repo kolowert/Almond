@@ -2,62 +2,35 @@ package fun.kolowert.hplayer;
 
 public enum GameType {
 	
-	SUPER {
-		private static final int COMBSET_SIZE = 6;
-		private static final int PLAYSET_SIZE = 6;
-		private static final int GAMESET_SIZE = 52;
-		public int getCombSetSize() {
-			return COMBSET_SIZE;
-		}
-		public int getPlaySetSize() {
-			return PLAYSET_SIZE;
-		}
-		public int getGameSetSize() {
-			return GAMESET_SIZE;
-		}
-		public String histFile() {
-			return "super.txt";
-		}
-	},
+	MAXI(5, 5, 45, "maxi.txt"),
+	SUPER(6, 6, 52, "super.txt"),
+	KENO(10, 10, 80, "keno.txt");
 	
-	MAXI {
-		private static final int COMBSET_SIZE = 5;
-		private static final int PLAYSET_SIZE = 5;
-		private static final int GAMESET_SIZE = 45;
-		public int getCombSetSize() {
-			return COMBSET_SIZE;
-		}
-		public int getPlaySetSize() {
-			return PLAYSET_SIZE;
-		}
-		public int getGameSetSize() {
-			return GAMESET_SIZE;
-		}
-		public String histFile() {
-			return "maxi.txt";
-		}
-	},
+	private final int combSetSize;
+	private final int playSetSize;
+	private final int gameSetSize;
+	private final String histFileName;
 	
-	KENO {
-		private static final int COMBSET_SIZE = 6;
-		private static final int PLAYSET_SIZE = 20;
-		private static final int GAMESET_SIZE = 80;
-		public int getCombSetSize() {
-			return COMBSET_SIZE;
-		}
-		public int getPlaySetSize() {
-			return PLAYSET_SIZE;
-		}
-		public int getGameSetSize() {
-			return GAMESET_SIZE;
-		}
-		public String histFile() {
-			return "keno.txt";
-		}
-	};
+	GameType(int combSize, int playSize, int gameSize, String fileName) {
+		combSetSize = combSize;
+		playSetSize = playSize;
+		gameSetSize = gameSize;
+		histFileName = fileName;
+	}
+
+	public int getCombSetSize() {
+		return combSetSize;
+	}
+
+	public int getPlaySetSize() {
+		return playSetSize;
+	}
+
+	public int getGameSetSize() {
+		return gameSetSize;
+	}
 	
-	public abstract int getCombSetSize();
-	public abstract int getPlaySetSize();
-	public abstract int getGameSetSize();
-	public abstract String histFile();
+	public String getHistFileName() {
+		return histFileName;
+	}
 }

@@ -8,7 +8,7 @@ public class HistAnalizer {
 	private String path = "resources/hist/";
 
 	public HistAnalizer(GameType gameType) {
-		path += gameType.histFile();
+		path += gameType.getHistFileName();
 	}
 
 	/**
