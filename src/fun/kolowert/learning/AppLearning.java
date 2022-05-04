@@ -15,8 +15,35 @@ public class AppLearning {
 
 		learning.playClass(false);
 
-		learning.playString(true);
+		learning.playString(false);
 
+		learning.playSystemProperties(true);
+
+		learning.playWrappers(false);
+
+		learning.playClassLoader(false);
+
+	}
+
+	private void playClassLoader(boolean doit) {
+		if (!doit)
+			return;
+
+		ClassLoader classLoader = ClassLoader.getSystemClassLoader();
+		System.out.println("classLoader: " + classLoader.toString());
+	}
+
+	@SuppressWarnings("deprecation")
+	private void playWrappers(boolean doit) {
+		if (!doit)
+			return;
+
+		boolean bool2 = false;
+
+		Boolean boolean1 = new Boolean("TRUE");
+		Boolean boolean2 = new Boolean(bool2);
+
+		System.out.println(boolean1 + " " + boolean2);
 	}
 
 	private void playString(boolean doit) {
@@ -32,13 +59,20 @@ public class AppLearning {
 		System.out.println("s1 and s2 are the same = " + (s1 == s2));
 		System.out.println("s1 and s3 are the same = " + (s1 == s3));
 		System.out.println("s1 and s4 are the same = " + (s1 == s4));
-		
+
+	}
+
+	private void playSystemProperties(boolean doit) {
+		if (!doit)
+			return;
+
 		Properties properties = System.getProperties();
 		String prop = properties.toString();
 		System.out.println("\nSystem Properties");
 		System.out.println(prop.replace(", ", ",\n").replace(";", ";\n\t"));
 	}
 
+	@SuppressWarnings("deprecation")
 	private void playClass(boolean doit)
 			throws ClassNotFoundException, InstantiationException, IllegalAccessException {
 		if (!doit)
@@ -59,6 +93,7 @@ public class AppLearning {
 		}
 
 		System.out.println("first.getClass().getCanonicalName() -> " + first.getClass().getCanonicalName());
+		@SuppressWarnings("unchecked")
 		Class<First> forNameFirst = (Class<First>) Class.forName("fun.kolowert.learning.First");
 		System.out.println("forNameFirst.newInstance() : " + forNameFirst.newInstance().toString());
 
