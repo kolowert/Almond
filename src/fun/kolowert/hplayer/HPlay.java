@@ -37,7 +37,7 @@ public class HPlay {
 		HPlay hPlay = new HPlay();
 		hPlay.play();
 		hPlay.playBook(true);
-		hPlay.hasher(false);
+		hPlay.buncher(true);
 	}
 
 	private void play() {
@@ -62,19 +62,39 @@ public class HPlay {
 		System.out.println("\n~~~ playBook ~~~");
 		BookDestructor bookDest = new BookDestructor1("book.txt");
 		List<String> wordSet = bookDest.destructToWordSet();
-		System.out.println("quantity of words is " + wordSet.size());
+		System.out.println("quantity of words is " + wordSet.size() + " hist deep is " + HIST_DEEP);
 
-		List<String> analizReport = makeAnalizReport(wordSet);
+		displayAnalizReport(wordSet, true);
 
-		for (String a : analizReport) {
-			System.out.println(a);
+	}
+
+	private void displayAnalizReport(List<String> textUnits, boolean letOnlyBest) {
+		List<String> bestReports = new ArrayList<>();
+
+		for (String textUnit : textUnits) {
+			int[] playCombination = gameSetter.makeGameSet(combSetSize, gameSetSize, textUnit);
+			MatchingReport analizReport = new HistAnalizer(GAME_TYPE).makeMatchingReport(playCombination, HIST_DEEP,
+					textUnit);
+			int[] matching = analizReport.getMatching();
+			int lastMatching = matching[matching.length - 1];
+			int prelastMatching = matching[matching.length - 2];
+			if (!letOnlyBest || (lastMatching != 0 || prelastMatching != 0)) {
+				bestReports.add(analizReport.report());
+			}
+		}
+
+		int counter = 0;
+		for (String report : bestReports) {
+			String pn = ++counter < 10 ? "00" + counter : counter < 100 ? "0" + counter : "" + counter;
+			String labe = "  " + combSetSize + "/" + gameSetSize;
+			System.out.println(pn + labe + "\t" + report);
 		}
 	}
 
 	/**
 	 * It plays bunch of texts
 	 */
-	private void hasher(boolean letHasher) {
+	private void buncher(boolean letHasher) {
 		if (!letHasher)
 			return;
 
@@ -99,29 +119,16 @@ public class HPlay {
 				"Bay Boat Car House Airplane Saile Ship", "Fuck the System",
 				"The quick brown fox jumps over the lazy dog" };
 
-		List<String> allText = prepareTextsList(aTexts, bTexts, cTexts);
-		List<String> analizReport = makeAnalizReport(allText);
 		System.out.println("\n----hasher");
-		System.out.println("type\t< com  bi  na  ti  on  >  [ an  al   y   z   i   s ]  seeding text\n");
-		for (String ar : analizReport) {
-			System.out.println(ar);
-		}
+		System.out.println("type\t< com  bi  na  ti  on  >  [ an  al   y   z   i   s ]  seeding text");
+		List<String> allText = prepareTextsList(aTexts, bTexts, cTexts);
+		displayAnalizReport(allText, true);
+
 	}
 
-	private List<String> makeAnalizReport(List<String> textLines) {
-		List<String> output = new ArrayList<>();
-		int counter = 0;
-		for (String textLine : textLines) {
-			int[] playCombination = gameSetter.makeGameSet(combSetSize, gameSetSize, textLine);
-			String matchingReport = new HistAnalizer(GAME_TYPE).reportMatches(playCombination, HIST_DEEP);
-			String pn = ++counter < 10 ? "00" + counter : counter < 100 ? "0" + counter : "" + counter;
-			String labe = "  " + combSetSize + "/" + gameSetSize;
-			output.add(pn + labe + "\t" + Serv.normalizeArray(playCombination) + "  " + matchingReport + "  "
-					+ textLine);
-		}
-		return output;
-	}
-
+	/**
+	 * Servant for buncher
+	 */
 	private List<String> prepareTextsList(String[]... arrays) {
 		List<String> output = new ArrayList<>();
 		for (String[] array : arrays) {
