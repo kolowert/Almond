@@ -3,6 +3,8 @@ package fun.kolowert.hplayer;
 import java.util.ArrayList;
 import java.util.List;
 
+import fun.kolowert.serv.Serv;
+
 public class HistAnalizer {
 
 	private String path = "resources/hist/";

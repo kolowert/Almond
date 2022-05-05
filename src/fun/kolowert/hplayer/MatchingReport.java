@@ -2,6 +2,8 @@ package fun.kolowert.hplayer;
 
 import java.util.Arrays;
 
+import fun.kolowert.serv.Serv;
+
 public class MatchingReport {
 
 	private int[] playCombination;
@@ -21,6 +23,10 @@ public class MatchingReport {
 	
 	public int[] getMatching() {
 		return matching;
+	}
+	
+	public int[] getPlayCombination() {
+		return playCombination;
 	}
 	
 	@Override

@@ -14946,6 +14946,27 @@ New Jersey is one of the wealthiest states in the U.S., with the second highest 
 Almost one-tenth of all households, or over 323,000 of 3.3 million, are millionaires, the highest rate per capita 
 in the country.[19] New Jersey's public school system consistently ranks at or among the top of all U.S. states.
 
+		String[] aTexts = { "a", "b", "c", "abc", "bcd", "premises", "abra kadabra boom", "abra kadAbra boom",
+				"aaaaaaaa", "aaaaaaab", "Francesca", "Francesco", "00000000", "London", "Montreal", "Austin Texax US",
+				"London is the capital and largest city of England and the United Kingdom. It stands on the River "
+						+ "Thames in south-east England at the head of a 50-mile (80 km) estuary down to the North Sea, "
+						+ "and has been a major settlement for two millennia.",
+				"Lviv", "Yavoriv", "Cieszyn", "Berlin", "Munich", "urvouwhvou", "uvouqeihfih", "UTRUYGLHO",
+				"WYUOPYRS", "Rozbahatity", "Lila", "Rich", "Rich Lila", "Happy Olga", "Horny Natalie",
+				"We are the champions my friends", "We are the champions my friends!", "japanese threesome", "Monday",
+				"Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday", "Grammar" };
+
+		String[] bTexts = { "Garage", "Fiat Grande Punto", "Mitsubishi Space Star", "Opel Meriva", "Skoda Roomster",
+				"Skoda Roomster S", "Skoda Roomster Greenline", "Skoda Roomster SE", "Skoda Yeti", "Kia Soul",
+				"Ford Fusion +", "Ford Fusion", "A car worth up to $6 thousand",
+				"A car worth up to $6 thousand, with: gasoline engine, manual gearbox, conditioner, 4 or 5 doors; "
+						+ "up to 150k km mileage, not damaged, no accidents, located in western Ukraine, not older "
+						+ "than 2008 year" };
+
+		String[] cTexts = new String[] { "Bay, Boat, Car, House, Airplane, Saile Ship",
+				"Bay Boat Car House Airplane Saile Ship", "Fuck the System",
+				"The quick brown fox jumps over the lazy dog" };
+
     1. Olivia
     2. Emma
     3. Ava

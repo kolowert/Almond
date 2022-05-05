@@ -1,13 +1,17 @@
 package fun.kolowert.hplayer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+
+import fun.kolowert.serv.Serv;
+import fun.kolowert.serv.Timer;
 
 public class HPlay {
 
 	private static final int COMB_SIZE = 8;
-	private static final int HIST_DEEP = 120;
+	private static final int HIST_DEEP = 90;
 	private static final GameType GAME_TYPE = GameType.MAXI;
 	private static final CoderType CODER_TYPE = CoderType.SHA265;
 	private static final String[] SEEDS = { "Opel Meriva", "Ford Fusion +", "Skoda Roomster", "Skoda Yeti",
@@ -35,10 +39,12 @@ public class HPlay {
 
 	public static void main(String[] args) {
 		HPlay hPlay = new HPlay();
+		Timer timer = new Timer();
 		hPlay.play(false);
 		hPlay.playBook(true);
 		hPlay.buncher(false);
-		System.out.println("~~~ FINISH ~~~");
+		System.out.println("\n~~~ FINISH ~~~");
+		System.out.println(timer.reportExtended());
 	}
 
 	private void play(boolean doit) {
@@ -71,6 +77,10 @@ public class HPlay {
 			textUnits.add(wordSet.get(i + 0) + " " + wordSet.get(i + 2));
 			textUnits.add(wordSet.get(i + 2) + " " + wordSet.get(i + 0));
 			textUnits.add(wordSet.get(i + 1) + " " + wordSet.get(i + 0));
+			
+			textUnits.add(wordSet.get(i + 0) + " " + wordSet.get(i + 1) + " " + wordSet.get(i + 2));
+			textUnits.add(wordSet.get(i + 1) + " " + wordSet.get(i + 2) + " " + wordSet.get(i + 0));
+			textUnits.add(wordSet.get(i + 2) + " " + wordSet.get(i + 0) + " " + wordSet.get(i + 1));
 		}
 
 		System.out.println("quantity of textUnits is " + textUnits.size() + " hist deep is " + HIST_DEEP);
@@ -79,10 +89,28 @@ public class HPlay {
 		
 		displayReports(matchingReports);
 		
-		// TODO
 		// Count Frequency of balls in matchingReports
+		int[] counter = new int[GAME_TYPE.getGameSetSize() + 1];
+		for (MatchingReport report : matchingReports) {
+			for (int ball : report.getPlayCombination()) {
+				++counter[ball];
+			}
+		}
 		
-
+		// prepare report
+		double[] freqReport = new double[GAME_TYPE.getGameSetSize() + 1];
+		for (int i = 1; i < counter.length; i++) {
+			freqReport[i] = counter[i] + 0.01 * i;
+		}
+		Arrays.sort(freqReport);
+		
+		// display
+		System.out.println("Frequency of balls in matchingReports: frequency.ball");
+		for (int i = freqReport.length - 1; i >= 0; i--) {
+			if (freqReport[i] > 1.0) {
+				System.out.print(freqReport[i] + " ");
+			}
+		}
 	}
 
 	private List<MatchingReport> analyzeMatching(List<String> textUnits, boolean letCollectOnlyBest) {
@@ -95,10 +123,11 @@ public class HPlay {
 			int[] matching = analizReport.getMatching();
 			if (!letCollectOnlyBest 
 					|| (
-							matching[matching.length - 1] <= 1
-							&& matching[matching.length - 2] <= 1
-							&& matching[matching.length - 3] <= 1
+							   matching[matching.length - 1] <= 0
+							&& matching[matching.length - 2] <= 0
+							&& matching[matching.length - 3] <= 0
 							&& matching[matching.length - 4] <= 1
+							//&& matching[matching.length - 5] <= 1
 						)
 				) 
 			{

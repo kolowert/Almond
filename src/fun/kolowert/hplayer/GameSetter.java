@@ -41,7 +41,7 @@ public class GameSetter {
 					break;
 				}
 				preCombination[i] *= 3;
-				combination[i] = counter + preCombination[i] % ballSet;
+				combination[i] = 1 + (counter + preCombination[i]) % ballSet;
 			} while (checkRepetition(combination));
 		}
 
@@ -60,5 +60,12 @@ public class GameSetter {
 		}
 		return false;
 	}
-
+	
+	// debugging
+	public static void main(String[] args) {
+		GameSetter gameSetter = new GameSetter();
+		int[] playCombination = gameSetter.makeGameSet(8, 80, "abrupt conformed");
+		System.out.println(Arrays.toString(playCombination));
+	}
+	
 }
