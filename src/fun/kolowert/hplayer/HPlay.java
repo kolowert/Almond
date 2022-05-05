@@ -7,8 +7,8 @@ import java.util.List;
 public class HPlay {
 
 	private static final int COMB_SIZE = 8;
-	private static final int HIST_DEEP = 100;
-	private static final GameType GAME_TYPE = GameType.KENO;
+	private static final int HIST_DEEP = 120;
+	private static final GameType GAME_TYPE = GameType.MAXI;
 	private static final CoderType CODER_TYPE = CoderType.SHA265;
 	private static final String[] SEEDS = { "Opel Meriva", "Ford Fusion +", "Skoda Roomster", "Skoda Yeti",
 			"A car worth up to $9 thousand, with: gasoline engine, manual gearbox, conditioner, 4 or 5 doors; "
@@ -35,12 +35,14 @@ public class HPlay {
 
 	public static void main(String[] args) {
 		HPlay hPlay = new HPlay();
-		hPlay.play();
+		hPlay.play(false);
 		hPlay.playBook(true);
-		hPlay.buncher(true);
+		hPlay.buncher(false);
+		System.out.println("~~~ FINISH ~~~");
 	}
 
-	private void play() {
+	private void play(boolean doit) {
+		if (!doit) return;
 		int counter = 0;
 		for (String seed : SEEDS) {
 			int[] playCombination = gameSetter.makeGameSet(combSetSize, gameSetSize, seed);
@@ -60,36 +62,63 @@ public class HPlay {
 			return;
 
 		System.out.println("\n~~~ playBook ~~~");
-		BookDestructor bookDest = new BookDestructor1("book.txt");
-		List<String> wordSet = bookDest.destructToWordSet();
-		System.out.println("quantity of words is " + wordSet.size() + " hist deep is " + HIST_DEEP);
+		BookDestructor bookDestructor = new BookDestructor1("book.txt");
+		List<String> wordSet = bookDestructor.destructToWordSet(false);
 
-		displayAnalizReport(wordSet, true);
+		List<String> textUnits = new ArrayList<>();
+		for (int i = 0; i < wordSet.size() - 2; i++) {
+			textUnits.add(wordSet.get(i + 0) + " " + wordSet.get(i + 1));
+			textUnits.add(wordSet.get(i + 0) + " " + wordSet.get(i + 2));
+			textUnits.add(wordSet.get(i + 2) + " " + wordSet.get(i + 0));
+			textUnits.add(wordSet.get(i + 1) + " " + wordSet.get(i + 0));
+		}
+
+		System.out.println("quantity of textUnits is " + textUnits.size() + " hist deep is " + HIST_DEEP);
+
+		List<MatchingReport> matchingReports = analyzeMatching(textUnits, true);
+		
+		displayReports(matchingReports);
+		
+		// TODO
+		// Count Frequency of balls in matchingReports
+		
 
 	}
 
-	private void displayAnalizReport(List<String> textUnits, boolean letOnlyBest) {
-		List<String> bestReports = new ArrayList<>();
+	private List<MatchingReport> analyzeMatching(List<String> textUnits, boolean letCollectOnlyBest) {
+		List<MatchingReport> bestReports = new ArrayList<>();
 
 		for (String textUnit : textUnits) {
 			int[] playCombination = gameSetter.makeGameSet(combSetSize, gameSetSize, textUnit);
 			MatchingReport analizReport = new HistAnalizer(GAME_TYPE).makeMatchingReport(playCombination, HIST_DEEP,
 					textUnit);
 			int[] matching = analizReport.getMatching();
-			int lastMatching = matching[matching.length - 1];
-			int prelastMatching = matching[matching.length - 2];
-			if (!letOnlyBest || (lastMatching != 0 || prelastMatching != 0)) {
-				bestReports.add(analizReport.report());
+			if (!letCollectOnlyBest 
+					|| (
+							matching[matching.length - 1] <= 1
+							&& matching[matching.length - 2] <= 1
+							&& matching[matching.length - 3] <= 1
+							&& matching[matching.length - 4] <= 1
+						)
+				) 
+			{
+				bestReports.add(analizReport);
 			}
 		}
-
+	return 	bestReports;
+	}
+	
+	private void displayReports(List<MatchingReport> reports) {
 		int counter = 0;
-		for (String report : bestReports) {
+		for (MatchingReport report : reports) {
 			String pn = ++counter < 10 ? "00" + counter : counter < 100 ? "0" + counter : "" + counter;
 			String labe = "  " + combSetSize + "/" + gameSetSize;
-			System.out.println(pn + labe + "\t" + report);
+			System.out.println(pn + labe + "\t" + report.report());
 		}
 	}
+	
+
+
 
 	/**
 	 * It plays bunch of texts
@@ -122,8 +151,10 @@ public class HPlay {
 		System.out.println("\n----hasher");
 		System.out.println("type\t< com  bi  na  ti  on  >  [ an  al   y   z   i   s ]  seeding text");
 		List<String> allText = prepareTextsList(aTexts, bTexts, cTexts);
-		displayAnalizReport(allText, true);
-
+		
+		List<MatchingReport> matchingReports = analyzeMatching(allText, true);
+		
+		displayReports(matchingReports);
 	}
 
 	/**

@@ -16,36 +16,41 @@ public class BookDestructor1 implements BookDestructor {
 	public BookDestructor1(String bookName) {
 		lines = new FileHand(PREPATH + bookName).read();
 	}
-	
+
 	@Override
 	public List<String> destructToLines() {
 		return lines;
 	}
-	
+
 	@Override
-	public List<String> destructToWordSet() {
+	public List<String> destructToWordSet(boolean letSort) {
 		Set<String> wordSet = new HashSet<>();
 		for (String line : lines) {
-			String[] words = line.split(" ");
-			Collections.addAll(wordSet, words);
+			String filtredLine = line.replaceAll("[^a-zA-Z]", " ");
+			String[] words = filtredLine.split(" ");
+			for (String word : words) {
+				if (word.length() > 3) {
+					wordSet.add(word);
+				}
+			}
 		}
 		List<String> result = new ArrayList<>();
 		CollectionUtils.addAll(result, wordSet);
+		if (letSort)
+			Collections.sort(result);
 		return result;
 	}
-	
+
 	// debugging
 	public static void main(String[] args) {
 		BookDestructor bookDest = new BookDestructor1("book.txt");
-		List<String> destructed = bookDest.destructToLines();
-		System.out.println(destructed);
-		System.out.println(destructed.size());
-		
-		List<String> wordSet = bookDest.destructToWordSet();
+		// List<String> destructed = bookDest.destructToLines();
+		// System.out.println(destructed);
+		// System.out.println(destructed.size());
+
+		List<String> wordSet = bookDest.destructToWordSet(true);
 		System.out.println(wordSet);
 		System.out.println(wordSet.size());
 	}
 
-	
-	
 }

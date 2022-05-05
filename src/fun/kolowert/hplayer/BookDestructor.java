@@ -6,6 +6,6 @@ public interface BookDestructor {
 	
 	public List<String> destructToLines();
 	
-	public List<String> destructToWordSet();
+	public List<String> destructToWordSet(boolean letSort);
 	
 }
