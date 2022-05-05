@@ -10,10 +10,13 @@ import fun.kolowert.serv.Timer;
 
 public class HPlay {
 
-	private static final int COMB_SIZE = 8;
-	private static final int HIST_DEEP = 90;
+	private static final int COMB_SIZE = 6;
+	private static final int HIST_DEEP = 39;
+	private static final int HIST_SHIFT = 0;
+	
 	private static final GameType GAME_TYPE = GameType.MAXI;
 	private static final CoderType CODER_TYPE = CoderType.SHA265;
+	
 	private static final String[] SEEDS = { "Opel Meriva", "Ford Fusion +", "Skoda Roomster", "Skoda Yeti",
 			"A car worth up to $9 thousand, with: gasoline engine, manual gearbox, conditioner, 4 or 5 doors; "
 					+ "up to 150k km mileage, not damaged, no accidents, located in western Ukraine, not older "
@@ -49,10 +52,12 @@ public class HPlay {
 
 	private void play(boolean doit) {
 		if (!doit) return;
+		
+		HistAnalizer histAnalyzer = new HistAnalizer(GAME_TYPE, HIST_DEEP, HIST_SHIFT);
 		int counter = 0;
 		for (String seed : SEEDS) {
 			int[] playCombination = gameSetter.makeGameSet(combSetSize, gameSetSize, seed);
-			String matchingReport = new HistAnalizer(GAME_TYPE).reportMatches(playCombination, HIST_DEEP);
+			String matchingReport = histAnalyzer.reportMatches(playCombination);
 			String pn = ++counter < 10 ? "0" + counter : "" + counter;
 			String labe = pn + "  " + combSetSize + "/" + gameSetSize;
 			System.out.println(
@@ -115,19 +120,19 @@ public class HPlay {
 
 	private List<MatchingReport> analyzeMatching(List<String> textUnits, boolean letCollectOnlyBest) {
 		List<MatchingReport> bestReports = new ArrayList<>();
-
+		HistAnalizer histAnalyzer = new HistAnalizer(GAME_TYPE, HIST_DEEP, HIST_SHIFT);
+		
 		for (String textUnit : textUnits) {
 			int[] playCombination = gameSetter.makeGameSet(combSetSize, gameSetSize, textUnit);
-			MatchingReport analizReport = new HistAnalizer(GAME_TYPE).makeMatchingReport(playCombination, HIST_DEEP,
-					textUnit);
+			MatchingReport analizReport = histAnalyzer.makeMatchingReport(playCombination, textUnit);
 			int[] matching = analizReport.getMatching();
 			if (!letCollectOnlyBest 
 					|| (
 							   matching[matching.length - 1] <= 0
 							&& matching[matching.length - 2] <= 0
 							&& matching[matching.length - 3] <= 0
-							&& matching[matching.length - 4] <= 1
-							//&& matching[matching.length - 5] <= 1
+							&& matching[matching.length - 4] <= 0
+							&& matching[matching.length - 5] <= 10
 						)
 				) 
 			{
@@ -181,7 +186,7 @@ public class HPlay {
 		System.out.println("type\t< com  bi  na  ti  on  >  [ an  al   y   z   i   s ]  seeding text");
 		List<String> allText = prepareTextsList(aTexts, bTexts, cTexts);
 		
-		List<MatchingReport> matchingReports = analyzeMatching(allText, true);
+		List<MatchingReport> matchingReports = analyzeMatching(allText, false);
 		
 		displayReports(matchingReports);
 	}

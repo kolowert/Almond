@@ -1,6 +1,7 @@
 package fun.kolowert.hplayer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import fun.kolowert.serv.Serv;
@@ -8,22 +9,21 @@ import fun.kolowert.serv.Serv;
 public class HistAnalizer {
 
 	private String path = "resources/hist/";
+	private List<String> hist;
+	List<int[]> histCombinations;
 
-	public HistAnalizer(GameType gameType) {
+	public HistAnalizer(GameType gameType, int histDeep, int histShift) {
 		path += gameType.getHistFileName();
+		hist = new FileHand(path).read();
+		histCombinations = convertToCombinations(hist, histDeep, histShift);
 	}
 
-	public MatchingReport makeMatchingReport(int[] playCombination, int histDeep, String textUnit) {
-		List<String> hist = new FileHand(path).read();
-		List<int[]> histCombinations = convertToCombinations(hist, histDeep);
-		
+	public MatchingReport makeMatchingReport(int[] playCombination, String textUnit) {
 		int[] analizResult = new int[1 + playCombination.length];
-		
 		for (int[] comb : histCombinations) {
 			int matches = countMatches(playCombination, comb);
 			analizResult[matches] += 1;
 		}
-		
 		return new MatchingReport(playCombination, analizResult, textUnit);
 	}
 
@@ -36,12 +36,7 @@ public class HistAnalizer {
 	 * @return string report (like array of integers) with matches for 0, 1, 2, 3, 4
 	 *         and more balls (depends on gameType)
 	 */
-	public String reportMatches(int[] ballSet, int histDeep) {
-
-		List<String> hist = new FileHand(path).read();
-
-		List<int[]> histCombinations = convertToCombinations(hist, histDeep);
-
+	public String reportMatches(int[] ballSet) {
 		int[] analizResult = new int[1 + ballSet.length];
 
 		for (int[] comb : histCombinations) {
@@ -63,12 +58,12 @@ public class HistAnalizer {
 		}
 		return counter;
 	}
-
-	private List<int[]> convertToCombinations(List<String> hist, int deep) {
-
+	
+	/** here we are */
+	private List<int[]> convertToCombinations(List<String> hist, int deep, int shift) {
 		List<int[]> result = new ArrayList<>();
 
-		for (int i = hist.size() - 1, counter = 0; i >= 0 && counter < deep; i--, counter++) {
+		for (int i = hist.size() - 1 - shift, counter = 0; i >= 0 && counter < deep; i--, counter++) {
 			String line = hist.get(i);
 			String[] parts = line.split(",");
 			int len = parts.length - 4;
@@ -84,12 +79,21 @@ public class HistAnalizer {
 
 			result.add(arr);
 		}
-
 		return result;
 	}
-
+	
+	// debugging
+	public void displayHistCombinations() {
+		for (int[] combination : histCombinations) {
+			System.out.println(Arrays.toString(combination));
+		}
+	}
+	
+	// debugging
 	public static void main(String[] args) {
 		System.out.println("Hello from HistAnalizer");
-		System.out.println(new HistAnalizer(GameType.SUPER).reportMatches(new int[] { 1, 2, 3, 4, 5 }, 10));
+		HistAnalizer ha = new HistAnalizer(GameType.SUPER, 10, 1);
+		System.out.println(ha.reportMatches(new int[] { 1, 2, 3, 4, 5 }));
+		ha.displayHistCombinations();
 	}
 }
