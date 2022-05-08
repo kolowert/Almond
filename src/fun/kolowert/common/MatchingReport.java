@@ -1,4 +1,4 @@
-package fun.kolowert.hplayer;
+package fun.kolowert.common;
 
 import java.util.Arrays;
 

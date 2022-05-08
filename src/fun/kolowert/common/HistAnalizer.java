@@ -1,9 +1,10 @@
-package fun.kolowert.hplayer;
+package fun.kolowert.common;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import fun.kolowert.serv.FileHand;
 import fun.kolowert.serv.Serv;
 
 public class HistAnalizer {
@@ -63,7 +64,7 @@ public class HistAnalizer {
 	private List<int[]> convertToCombinations(List<String> hist, int deep, int shift) {
 		List<int[]> result = new ArrayList<>();
 
-		for (int i = hist.size() - 1 - shift, counter = 0; i >= 0 && counter < deep; i--, counter++) {
+		for (int i = hist.size() - 1 - shift, counter = 0; i >= 0 && counter - shift < deep; i--, counter++) {
 			String line = hist.get(i);
 			String[] parts = line.split(",");
 			int len = parts.length - 4;

@@ -1,4 +1,4 @@
-package fun.kolowert.hplayer;
+package fun.kolowert.serv;
 
 import java.io.IOException;
 import java.nio.file.Files;

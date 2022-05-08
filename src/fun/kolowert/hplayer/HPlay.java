@@ -5,18 +5,21 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import fun.kolowert.common.GameType;
+import fun.kolowert.common.HistAnalizer;
+import fun.kolowert.common.MatchingReport;
 import fun.kolowert.serv.Serv;
 import fun.kolowert.serv.Timer;
 
 public class HPlay {
 
-	private static final int COMB_SIZE = 6;
-	private static final int HIST_DEEP = 39;
-	private static final int HIST_SHIFT = 0;
-	
-	private static final GameType GAME_TYPE = GameType.MAXI;
+	private static final int COMB_SIZE = 3;
+	private static final int HIST_DEEP = 30;
+	private static final int HIST_SHIFT = 3;
+
+	private static final GameType GAME_TYPE = GameType.KENO;
 	private static final CoderType CODER_TYPE = CoderType.SHA265;
-	
+
 	private static final String[] SEEDS = { "Opel Meriva", "Ford Fusion +", "Skoda Roomster", "Skoda Yeti",
 			"A car worth up to $9 thousand, with: gasoline engine, manual gearbox, conditioner, 4 or 5 doors; "
 					+ "up to 150k km mileage, not damaged, no accidents, located in western Ukraine, not older "
@@ -43,16 +46,21 @@ public class HPlay {
 	public static void main(String[] args) {
 		HPlay hPlay = new HPlay();
 		Timer timer = new Timer();
-		hPlay.play(false);
-		hPlay.playBook(true);
+
+		hPlay.play(true);
+
+		hPlay.playBook(false);
+
 		hPlay.buncher(false);
+
 		System.out.println("\n~~~ FINISH ~~~");
 		System.out.println(timer.reportExtended());
 	}
 
-	private void play(boolean doit) {
-		if (!doit) return;
-		
+	public void play(boolean doit) {
+		if (!doit)
+			return;
+
 		HistAnalizer histAnalyzer = new HistAnalizer(GAME_TYPE, HIST_DEEP, HIST_SHIFT);
 		int counter = 0;
 		for (String seed : SEEDS) {
@@ -68,7 +76,7 @@ public class HPlay {
 	/**
 	 * it plays with set of words from book
 	 */
-	private void playBook(boolean doit) {
+	public void playBook(boolean doit) {
 		if (!doit)
 			return;
 
@@ -82,7 +90,7 @@ public class HPlay {
 			textUnits.add(wordSet.get(i + 0) + " " + wordSet.get(i + 2));
 			textUnits.add(wordSet.get(i + 2) + " " + wordSet.get(i + 0));
 			textUnits.add(wordSet.get(i + 1) + " " + wordSet.get(i + 0));
-			
+
 			textUnits.add(wordSet.get(i + 0) + " " + wordSet.get(i + 1) + " " + wordSet.get(i + 2));
 			textUnits.add(wordSet.get(i + 1) + " " + wordSet.get(i + 2) + " " + wordSet.get(i + 0));
 			textUnits.add(wordSet.get(i + 2) + " " + wordSet.get(i + 0) + " " + wordSet.get(i + 1));
@@ -91,9 +99,15 @@ public class HPlay {
 		System.out.println("quantity of textUnits is " + textUnits.size() + " hist deep is " + HIST_DEEP);
 
 		List<MatchingReport> matchingReports = analyzeMatching(textUnits, true);
-		
+
 		displayReports(matchingReports);
-		
+
+		String frequencyReport = makeFrequencyReport(matchingReports);
+		System.out.println("Frequency of balls in matchingReports: frequency.ball");
+		System.out.println(frequencyReport);
+	}
+
+	private String makeFrequencyReport(List<MatchingReport> matchingReports) {
 		// Count Frequency of balls in matchingReports
 		int[] counter = new int[GAME_TYPE.getGameSetSize() + 1];
 		for (MatchingReport report : matchingReports) {
@@ -101,7 +115,6 @@ public class HPlay {
 				++counter[ball];
 			}
 		}
-		
 		// prepare report
 		double[] freqReport = new double[GAME_TYPE.getGameSetSize() + 1];
 		for (int i = 1; i < counter.length; i++) {
@@ -109,39 +122,39 @@ public class HPlay {
 		}
 		Arrays.sort(freqReport);
 		
-		// display
-		System.out.println("Frequency of balls in matchingReports: frequency.ball");
+		StringBuilder sb = new StringBuilder();
 		for (int i = freqReport.length - 1; i >= 0; i--) {
 			if (freqReport[i] > 1.0) {
-				System.out.print(freqReport[i] + " ");
+				sb.append(freqReport[i]).append(" ");
 			}
 		}
+		return sb.toString();
 	}
 
 	private List<MatchingReport> analyzeMatching(List<String> textUnits, boolean letCollectOnlyBest) {
 		List<MatchingReport> bestReports = new ArrayList<>();
 		HistAnalizer histAnalyzer = new HistAnalizer(GAME_TYPE, HIST_DEEP, HIST_SHIFT);
-		
+
 		for (String textUnit : textUnits) {
 			int[] playCombination = gameSetter.makeGameSet(combSetSize, gameSetSize, textUnit);
 			MatchingReport analizReport = histAnalyzer.makeMatchingReport(playCombination, textUnit);
 			int[] matching = analizReport.getMatching();
-			if (!letCollectOnlyBest 
-					|| (
-							   matching[matching.length - 1] <= 0
-							&& matching[matching.length - 2] <= 0
-							&& matching[matching.length - 3] <= 0
-							&& matching[matching.length - 4] <= 0
-							&& matching[matching.length - 5] <= 10
-						)
+			if (!letCollectOnlyBest || 
+					(
+					   matching[matching.length - 1] <= 0 
+					&& matching[matching.length - 2] <= 0
+					&& matching[matching.length - 3] <= 1 
+					&& matching[matching.length - 4] <= 1
+					&& matching[matching.length - 5] <= 99
+					)
 				) 
 			{
 				bestReports.add(analizReport);
 			}
 		}
-	return 	bestReports;
+		return bestReports;
 	}
-	
+
 	private void displayReports(List<MatchingReport> reports) {
 		int counter = 0;
 		for (MatchingReport report : reports) {
@@ -150,9 +163,6 @@ public class HPlay {
 			System.out.println(pn + labe + "\t" + report.report());
 		}
 	}
-	
-
-
 
 	/**
 	 * It plays bunch of texts
@@ -176,6 +186,9 @@ public class HPlay {
 				"Ford Fusion +", "Ford Fusion", "A car worth up to $6 thousand",
 				"A car worth up to $6 thousand, with: gasoline engine, manual gearbox, conditioner, 4 or 5 doors; "
 						+ "up to 150k km mileage, not damaged, no accidents, located in western Ukraine, not older "
+						+ "than 2008 year",
+				"A car worth up to $9 thousand, with: gasoline engine, manual gearbox, conditioner, 4 or 5 doors; "
+						+ "up to 150k km mileage, not damaged, no accidents, located in western Ukraine, not older "
 						+ "than 2008 year" };
 
 		String[] cTexts = new String[] { "Bay, Boat, Car, House, Airplane, Saile Ship",
@@ -185,9 +198,9 @@ public class HPlay {
 		System.out.println("\n----hasher");
 		System.out.println("type\t< com  bi  na  ti  on  >  [ an  al   y   z   i   s ]  seeding text");
 		List<String> allText = prepareTextsList(aTexts, bTexts, cTexts);
-		
+
 		List<MatchingReport> matchingReports = analyzeMatching(allText, false);
-		
+
 		displayReports(matchingReports);
 	}
 

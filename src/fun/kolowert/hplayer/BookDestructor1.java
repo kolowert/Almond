@@ -8,6 +8,8 @@ import java.util.Set;
 
 import org.apache.commons.collections4.CollectionUtils;
 
+import fun.kolowert.serv.FileHand;
+
 public class BookDestructor1 implements BookDestructor {
 
 	private static final String PREPATH = "resources/book/";
