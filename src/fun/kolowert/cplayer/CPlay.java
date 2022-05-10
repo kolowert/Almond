@@ -116,23 +116,22 @@ public class CPlay {
 	}
 
 	public double[] makeHitReports(double[] frequencyReport) {
-
-		int bigSize = 3;
-		int smallFreq = 0;
-
-		int[] bigFrequencySet = makeBigFrequencySet(frequencyReport, bigSize);
-
-		int[] smallFrequencySet = makeSmallFrequencySet(frequencyReport, smallFreq);
+		int[] bigSizes = { 9, 18, 27, 36, 45, 52 };
+		int smallFreq = 5;
+		
+		double[] result = new double[bigSizes.length + 1];
 
 		int[] nextLineOfHistBlock = histAnalyzer.getNextLineOfHistBlock(histShift);
-
-		int bigHitCount = countHits(bigFrequencySet, nextLineOfHistBlock);
-
+		
+		for (int ind = 0; ind < bigSizes.length; ind++) {
+			int[] bigFrequencySet = makeBigFrequencySet(frequencyReport, bigSizes[ind]);
+			int bigHitCount = countHits(bigFrequencySet, nextLineOfHistBlock);
+			result[ind] = bigHitCount + 0.01 * bigFrequencySet.length;
+		}
+		
+		int[] smallFrequencySet = makeSmallFrequencySet(frequencyReport, smallFreq);
 		int smallHitCount = countHits(smallFrequencySet, nextLineOfHistBlock);
-
-		double[] result = new double[2];
-		result[0] = bigHitCount + 0.01 * bigFrequencySet.length;
-		result[1] = smallHitCount + 0.01 * smallFrequencySet.length;
+		result[bigSizes.length] = smallHitCount + 0.01 * smallFrequencySet.length;
 
 		return result;
 	}
@@ -145,6 +144,30 @@ public class CPlay {
 			double hitCoef = 1.0 * hitCount / setSize;
 			String bigHitReport = String.format(" %d/%d-%s ", hitCount, setSize, Serv.normDouble4(hitCoef));
 			sb.append(bigHitReport).append("  ");
+		}
+		return sb.toString();
+	}
+	
+	public String reportIsolatedHitReports(double[] hitReports) {
+		StringBuilder sb = new StringBuilder();
+		int hitCounts = 0;
+		int setSizes = 0;
+		for (int i = 0; i < hitReports.length; i++) {
+			int hitCount = (int) hitReports[i];
+			int setSize = (int) (0.5 + 100 * (hitReports[i] - (int) hitReports[i]));
+			
+			// isolation
+			hitCount -= hitCounts;
+			setSize -= setSizes;
+			hitCounts += hitCount;
+			setSizes += setSize;
+			
+			double hitCoef = 1.0 * hitCount / setSize;
+			String bigHitReport = String.format(" %d/%d-%s ", hitCount, setSize, Serv.normDouble4(hitCoef));
+			sb.append(bigHitReport).append("\t");
+			
+			// replace old data in hitReports by new isolated
+			hitReports[i] = hitCount + 0.01 * setSize;
 		}
 		return sb.toString();
 	}
