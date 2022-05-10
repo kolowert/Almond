@@ -64,7 +64,7 @@ public class HistAnalizer {
 	private List<int[]> convertToCombinations(List<String> hist, int deep, int shift) {
 		List<int[]> result = new ArrayList<>();
 
-		for (int i = hist.size() - 1 - shift, counter = 0; i >= 0 && counter - shift < deep; i--, counter++) {
+		for (int i = hist.size() - 1 - shift, counter = 0; i >= 0 && counter < deep; i--, counter++) {
 			String line = hist.get(i);
 			String[] parts = line.split(",");
 			int len = parts.length - 4;
@@ -80,7 +80,18 @@ public class HistAnalizer {
 
 			result.add(arr);
 		}
+		// System.out.println("convertToCombinations#HistAnalyzer shift:" + shift + " result.size:" + result.size()); // debugging
 		return result;
+	}
+	
+	/**
+	 * it gets histLine coming after histCombinations
+	 * if is not any, it return last line  
+	 */
+	public int[] getNextLineOfHistBlock(int histShift) {
+		int lineIndex = histShift - 1 >= 0 ? histShift - 1 : 0; 
+		List<int[]> specialCombinations = convertToCombinations(hist, 1, lineIndex);
+		return specialCombinations.get(0);
 	}
 	
 	// debugging
@@ -93,8 +104,10 @@ public class HistAnalizer {
 	// debugging
 	public static void main(String[] args) {
 		System.out.println("Hello from HistAnalizer");
-		HistAnalizer ha = new HistAnalizer(GameType.SUPER, 10, 1);
-		System.out.println(ha.reportMatches(new int[] { 1, 2, 3, 4, 5 }));
+		int shift = 2;
+		HistAnalizer ha = new HistAnalizer(GameType.KENO, 5, shift);
+		// System.out.println(ha.reportMatches(new int[] { 1, 2, 3, 4, 5 }));
 		ha.displayHistCombinations();
+		System.out.println("\n" + Arrays.toString(ha.getNextLineOfHistBlock(shift)));
 	}
 }

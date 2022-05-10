@@ -139,7 +139,12 @@ public class Combinator {
 	public boolean isFinished() {
 		return isFinished;
 	}
-
+	
+	public static String reportCombinationsQuantity(int subSet, int superSet) {
+		long combinationsQuantity = calculateCombinations(subSet, superSet);
+		return String.format("%d from %d = %,d combinations%n", subSet, superSet, combinationsQuantity);
+	}
+	
 	public static long calculateCombinations(int subSet, int superSet) {
 		int dif = superSet - subSet;
 		long subSetFactorial = factorial(subSet);
@@ -150,7 +155,6 @@ public class Combinator {
 		}
 		double preResult = (double) firstProduct / subSetFactorial;
 		long result = (long) (preResult * nextProduct);
-		System.out.printf("%d from %d = %,d combinations%n", subSet, superSet, result);
 		return result;
 	}
 
