@@ -7,24 +7,30 @@ import java.util.List;
 
 import fun.kolowert.common.GameType;
 import fun.kolowert.common.HistAnalizer;
+import fun.kolowert.common.HistHandler;
 import fun.kolowert.common.MatchingReport;
 import fun.kolowert.serv.Serv;
 import fun.kolowert.serv.Timer;
 
 public class HPlay {
 
-	private static final int COMB_SIZE = 3;
-	private static final int HIST_DEEP = 30;
-	private static final int HIST_SHIFT = 3;
+	private static final int COMB_SIZE = 8;
+	private static final int HIST_DEEP = 10;
+	private static final int HIST_SHIFT = 1;
 
 	private static final GameType GAME_TYPE = GameType.KENO;
-	private static final CoderType CODER_TYPE = CoderType.SHA265;
-
-	private static final String[] SEEDS = { "Opel Meriva", "Ford Fusion +", "Skoda Roomster", "Skoda Yeti",
+	private static final CoderType CODER_TYPE = CoderType.SHA256;
+	
+	private static List<int[]> histCombinations = new HistHandler(GAME_TYPE, 1, HIST_SHIFT + 1).getHistCombinations(); 
+	private static String prelastComb = Arrays.toString(histCombinations.get(0)).replaceAll("\\[|\\]|,", ""); 
+	
+	//		convertToCombinations(new FileHand("resources/hist/" + GAME_TYPE.getHistFileName()).read(), 1, 1); // "5 11 12 24 51 52";
+	
+	private static final String[] SEEDS = { "Garage", "Opel Meriva", "Renault Grand Modus", "Ford Fusion +", 
+			"Skoda Roomster", "Skoda Yeti",
 			"A car worth up to $9 thousand, with: gasoline engine, manual gearbox, conditioner, 4 or 5 doors; "
 					+ "up to 150k km mileage, not damaged, no accidents, located in western Ukraine, not older "
-					+ "than 2008 year",
-			"Garage" };
+					+ "than 2008 year", "Crack the System", prelastComb };
 
 	private int combSetSize;
 	private int gameSetSize;
@@ -183,7 +189,7 @@ public class HPlay {
 
 		String[] bTexts = { "Garage", "Fiat Grande Punto", "Mitsubishi Space Star", "Opel Meriva", "Skoda Roomster",
 				"Skoda Roomster S", "Skoda Roomster Greenline", "Skoda Roomster SE", "Skoda Yeti", "Kia Soul",
-				"Ford Fusion +", "Ford Fusion", "A car worth up to $6 thousand",
+				"Ford Fusion +", "Ford Fusion", "Renault Grand Modus", "A car worth up to $6 thousand",
 				"A car worth up to $6 thousand, with: gasoline engine, manual gearbox, conditioner, 4 or 5 doors; "
 						+ "up to 150k km mileage, not damaged, no accidents, located in western Ukraine, not older "
 						+ "than 2008 year",
@@ -192,11 +198,13 @@ public class HPlay {
 						+ "than 2008 year" };
 
 		String[] cTexts = new String[] { "Bay, Boat, Car, House, Airplane, Saile Ship",
-				"Bay Boat Car House Airplane Saile Ship", "Fuck the System",
-				"The quick brown fox jumps over the lazy dog" };
+				"Bay Boat Car House Airplane Saile Ship", "Fuck the System", "Crack the System",
+				"The quick brown fox jumps over the lazy dog", 
+				"ThEqUiCkBrOwNfxJuMpSoVeRtHLaZyDGQIcKbWnFXjmPsvlAzYdg 0123456789!",
+				"!$0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz" };
 
 		System.out.println("\n----hasher");
-		System.out.println("type\t< com  bi  na  ti  on  >  [ an  al   y   z   i   s ]  seeding text");
+		System.out.println("type\t< combination >  [ analyzis ]  seeding text unit");
 		List<String> allText = prepareTextsList(aTexts, bTexts, cTexts);
 
 		List<MatchingReport> matchingReports = analyzeMatching(allText, false);

@@ -116,12 +116,12 @@ public class CPlay {
 	}
 
 	public double[] makeHitReports(double[] frequencyReport) {
-		int[] bigSizes = { 9, 18, 27, 36, 45, 52 };
+		int[] bigSizes = { 10, 20, 30, 40, 50, 60, 70, 80 };
 		int smallFreq = 5;
 		
 		double[] result = new double[bigSizes.length + 1];
 
-		int[] nextLineOfHistBlock = histAnalyzer.getNextLineOfHistBlock(histShift);
+		int[] nextLineOfHistBlock = histAnalyzer.getHistHandler().getNextLineOfHistBlock(histShift);
 		
 		for (int ind = 0; ind < bigSizes.length; ind++) {
 			int[] bigFrequencySet = makeBigFrequencySet(frequencyReport, bigSizes[ind]);

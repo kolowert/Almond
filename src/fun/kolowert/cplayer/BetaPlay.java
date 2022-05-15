@@ -24,19 +24,19 @@ public class BetaPlay {
 
 	public static void multyPlay() {
 
-		GameType gameType = GameType.SUPER;
-		int playSet = 6;
-		int histDeep = 62;
-		int histShiftFrom = 17; 
-		int histShiftTo = 15;
-		int[] matchingMask = new int[] { 0, 0, 0, 0, 0 };
+		GameType gameType = GameType.KENO;
+		int playSet = 5;
+		int histDeep = 20;
+		int histShiftFrom = 45; 
+		int histShiftTo = 35;
+		int[] matchingMask = new int[] { 100, 0, 0, 0, 0 };
 		
 		System.out.println("multyPlay # BetaPlay " + System.currentTimeMillis());
 		System.out.println("gameType:"+gameType.name() +" playSet:"+ playSet +" histDeep:"+ histDeep 
 				+ " matchingMask:" + Arrays.toString(matchingMask));
 		System.out.println(Combinator.reportCombinationsQuantity(playSet, gameType.getGameSetSize()));
 		
-		double[] coefSum = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
+		double[] coefSum = new double[] { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
 		int counter = 0;
 		for (int indexHistShift = histShiftFrom; indexHistShift >= histShiftTo; indexHistShift--) {
 			CPlay cPlay = new CPlay(gameType, playSet, histDeep, indexHistShift, matchingMask);
@@ -64,16 +64,17 @@ public class BetaPlay {
 	}
 
 	public static void demoPlay() {
-		GameType gameType = GameType.SUPER;
-		int playSet = 6;
-		int histDeep = 62;
-		int histShift = 10;
-		int[] matchingMask = new int[] { 0, 0, 0, 0, 0 };
+		GameType gameType = GameType.KENO;
+		int playSet = 5;
+		int histDeep = 20;
+		int histShift = 1;
+		int[] matchingMask = new int[] { 100, 0, 0, 0, 0 };
 
 		CPlay cPlay = new CPlay(gameType, playSet, histDeep, histShift, matchingMask);
 		
 		System.out.println("demoPlay # BetaPlay " + System.currentTimeMillis());
-		System.out.println("gameType:"+gameType.name() +" playSet:"+ playSet +" histDeep:"+ histDeep 
+		System.out.println("gameType:" + gameType.name() + " playSet:" + playSet + 
+				" histDeep:" + histDeep 
 				+ " matchingMask:" + Arrays.toString(matchingMask));
 		System.out.println(Combinator.reportCombinationsQuantity(playSet, gameType.getGameSetSize()));
 
@@ -84,7 +85,8 @@ public class BetaPlay {
 		cPlay.displayFrequencyReports(frequencyReport);
 		
 		double[] hitReports = cPlay.makeHitReports(frequencyReport);
-		System.out.println("hitReport " + histShift + ": " + cPlay.reportHitReports(hitReports));
+		String isolatedHitReportsReport = cPlay.reportIsolatedHitReports(hitReports);
+		System.out.println("hitReport " + histShift + ": " + isolatedHitReportsReport);
 	}
 
 }
