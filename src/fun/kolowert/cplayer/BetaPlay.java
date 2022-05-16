@@ -15,7 +15,7 @@ public class BetaPlay {
 	public static void main(String[] args) {
 		Timer timer = new Timer();
 		
-		//demoPlay();
+		demoPlay();
 		multyPlay();
 
 		System.out.println("\n~ ~ ~ FINISH ~ ~ ~");
@@ -25,11 +25,11 @@ public class BetaPlay {
 	public static void multyPlay() {
 
 		GameType gameType = GameType.KENO;
-		int playSet = 5;
+		int playSet = 4;
 		int histDeep = 20;
-		int histShiftFrom = 45; 
-		int histShiftTo = 35;
-		int[] matchingMask = new int[] { 100, 0, 0, 0, 0 };
+		int histShiftFrom = 4; 
+		int histShiftTo = 3;
+		int[] matchingMask = new int[] { 100, 100, 0, 0, 0 };
 		
 		System.out.println("multyPlay # BetaPlay " + System.currentTimeMillis());
 		System.out.println("gameType:"+gameType.name() +" playSet:"+ playSet +" histDeep:"+ histDeep 
@@ -41,12 +41,13 @@ public class BetaPlay {
 		for (int indexHistShift = histShiftFrom; indexHistShift >= histShiftTo; indexHistShift--) {
 			CPlay cPlay = new CPlay(gameType, playSet, histDeep, indexHistShift, matchingMask);
 			List<MatchingReport> reports = cPlay.makePlayReports();
-			double[] frequencyReport = cPlay.makeFrequencyReport(reports);
+			double[] frequencyReport = new FreqReporter(gameType, reports).makeFrequencyReport();
 			
-			double[] hitReports = cPlay.makeHitReports(frequencyReport);
+			HitReporterSingle hitReporter = new HitReporterSingle();
+			double[] hitReports = hitReporter.makeHitReports(gameType, histDeep, indexHistShift, frequencyReport);
 			
 			System.out.println("hitReportIso " + Serv.normInt2(indexHistShift) 
-					+ ": " + cPlay.reportIsolatedHitReports(hitReports));
+					+ ": " + hitReporter.reportIsolatedHitReports(hitReports));
 			
 			for (int i = 0; i < coefSum.length; i++) {
 				coefSum[i] += 1.0 * (int) hitReports[i] / (100.0 * (hitReports[i] - (int) hitReports[i]));
@@ -65,10 +66,10 @@ public class BetaPlay {
 
 	public static void demoPlay() {
 		GameType gameType = GameType.KENO;
-		int playSet = 5;
-		int histDeep = 20;
+		int playSet = 4;
+		int histDeep = 40;
 		int histShift = 1;
-		int[] matchingMask = new int[] { 100, 0, 0, 0, 0 };
+		int[] matchingMask = new int[] { 100, 100, 0, 0, 0 };
 
 		CPlay cPlay = new CPlay(gameType, playSet, histDeep, histShift, matchingMask);
 		
@@ -80,13 +81,15 @@ public class BetaPlay {
 
 		List<MatchingReport> reports = cPlay.makePlayReports();
 		cPlay.displayPlayReports(reports);
-
-		double[] frequencyReport = cPlay.makeFrequencyReport(reports);
-		cPlay.displayFrequencyReports(frequencyReport);
 		
-		double[] hitReports = cPlay.makeHitReports(frequencyReport);
-		String isolatedHitReportsReport = cPlay.reportIsolatedHitReports(hitReports);
-		System.out.println("hitReport " + histShift + ": " + isolatedHitReportsReport);
+		FreqReporter freqReporter = new FreqReporter(gameType, reports);
+		double[] frequencyReport = freqReporter.makeFrequencyReport(); 
+		freqReporter.displayFrequencyReports(histShift);
+		
+		HitReporterSingle hitReporter = new HitReporterSingle();
+		double[] hitReports = hitReporter.makeHitReports(gameType, histDeep, histShift, frequencyReport);
+		String isolatedHitReportsReport = hitReporter.reportIsolatedHitReports(hitReports);
+		System.out.println("hitReport " + histShift + ": " + isolatedHitReportsReport + "\n");
 	}
 
 }

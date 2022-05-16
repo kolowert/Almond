@@ -15,11 +15,11 @@ import fun.kolowert.serv.Timer;
 public class HPlay {
 
 	private static final int COMB_SIZE = 8;
-	private static final int HIST_DEEP = 10;
+	private static final int HIST_DEEP = 100;
 	private static final int HIST_SHIFT = 1;
 
-	private static final GameType GAME_TYPE = GameType.KENO;
-	private static final CoderType CODER_TYPE = CoderType.SHA256;
+	private static final GameType GAME_TYPE = GameType.MAXI;
+	private static final CoderType CODER_TYPE = CoderType.KOLO95;
 	
 	private static List<int[]> histCombinations = new HistHandler(GAME_TYPE, 1, HIST_SHIFT + 1).getHistCombinations(); 
 	private static String prelastComb = Arrays.toString(histCombinations.get(0)).replaceAll("\\[|\\]|,", ""); 
@@ -57,7 +57,7 @@ public class HPlay {
 
 		hPlay.playBook(false);
 
-		hPlay.buncher(false);
+		hPlay.buncher(true);
 
 		System.out.println("\n~~~ FINISH ~~~");
 		System.out.println(timer.reportExtended());
