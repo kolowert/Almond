@@ -7,6 +7,7 @@ import fun.kolowert.common.GameType;
 import fun.kolowert.common.MatchingReport;
 import fun.kolowert.serv.Serv;
 import fun.kolowert.serv.Timer;
+
 /**
  * BetaPlay
  */
@@ -18,8 +19,7 @@ public class BetaPlay {
 		demoPlay();
 		//multyPlay();
 
-		System.out.println("\n~ ~ ~ FINISH ~ ~ ~");
-		System.out.println(timer.reportExtended());
+		System.out.println("\nFINISH ~ " + timer.reportExtended());
 	}
 
 	public static void multyPlay() {
@@ -65,12 +65,12 @@ public class BetaPlay {
 	}
 
 	public static void demoPlay() {
-		GameType gameType = GameType.KENO;
-		int playSet = 4;
-		int histDeep = 40;
-		int histShift = 1;
-		int betSize = 3;
-		int[] matchingMask = new int[] { 100, 100, 4, 0, 0 };
+		GameType gameType = GameType.SUPER;
+		int playSet = 6;
+		int histDeep = 54;
+		int histShift = 5;
+		int[] matchingMask = new int[] { 0, 0, 0, 0, 0 };
+		int betSize = 4;
 
 		CPlay cPlay = new CPlay(gameType, playSet, histDeep, histShift, matchingMask);
 		
@@ -81,7 +81,8 @@ public class BetaPlay {
 		System.out.println(Combinator.reportCombinationsQuantity(playSet, gameType.getGameSetSize()));
 
 		List<MatchingReport> reports = cPlay.makePlayReports();
-		cPlay.displayPlayReports(reports);
+		//cPlay.displayPlayReports(reports);
+		System.out.println(reports.size() + " lines in frequency reports");
 		
 		FreqReporterSingle freqReporter = new FreqReporterSingle(gameType, reports);
 		double[] frequencyReport = freqReporter.makeFrequencyReport(); 
@@ -92,8 +93,14 @@ public class BetaPlay {
 		String isolatedHitReportsReport = hitReporter.reportIsolatedHitReports(hitReports);
 		System.out.println("hitReport S " + histShift + ": " + isolatedHitReportsReport + "\n");
 		
-		FreqReporterMulti freqReporter2 = new FreqReporterMulti(gameType, betSize, reports);
-		freqReporter2.displayFrequencyReports(histShift);
+		FreqReporterMulti freqReporterMultic = new FreqReporterMulti(gameType, betSize - 1, reports);
+		freqReporterMultic.displayFrequencyReports(histShift);
+		
+		FreqReporterMulti freqReporterMulti = new FreqReporterMulti(gameType, betSize, reports);
+		freqReporterMulti.displayFrequencyReports(histShift);
+		
+		FreqReporterMulti freqReporterMultis = new FreqReporterMulti(gameType, betSize + 1, reports);
+		freqReporterMultis.displayFrequencyReports(histShift);
 	}
 
 }
