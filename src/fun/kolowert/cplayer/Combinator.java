@@ -140,6 +140,10 @@ public class Combinator {
 		return isFinished;
 	}
 	
+	public boolean hasNext() {
+		return !isFinished;
+	}
+	
 	public static String reportCombinationsQuantity(int subSet, int superSet) {
 		long combinationsQuantity = calculateCombinations(subSet, superSet);
 		return String.format("%d from %d = %,d combinations%n", subSet, superSet, combinationsQuantity);

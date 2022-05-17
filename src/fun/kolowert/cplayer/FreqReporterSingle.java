@@ -15,13 +15,13 @@ import fun.kolowert.serv.Serv;
  * @param GameType
  * @param matchingReports
  */
-public class FreqReporter {
+public class FreqReporterSingle {
 
 	private final GameType gameType;
 	private final List<MatchingReport> matchingReports;
 	private final double[] frequencyReport;
 
-	public FreqReporter(GameType gameType, List<MatchingReport> matchingReports) {
+	public FreqReporterSingle(GameType gameType, List<MatchingReport> matchingReports) {
 		this.gameType = gameType;
 		this.matchingReports = matchingReports;
 		frequencyReport = prepareFrequencyReport();
@@ -67,7 +67,7 @@ public class FreqReporter {
 			String frequency = Serv.normInt3((int) frequencyReport[i]);
 			sb.append(++c).append("|").append(frequency).append("(").append(ball).append(")").append("  ");
 		}
-		System.out.println("frqReport " + histShift + " > " + sb.toString());
+		System.out.println("frqReport S " + histShift + " > " + sb.toString());
 	}
 
 }

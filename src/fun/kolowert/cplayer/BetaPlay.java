@@ -16,7 +16,7 @@ public class BetaPlay {
 		Timer timer = new Timer();
 		
 		demoPlay();
-		multyPlay();
+		//multyPlay();
 
 		System.out.println("\n~ ~ ~ FINISH ~ ~ ~");
 		System.out.println(timer.reportExtended());
@@ -27,8 +27,8 @@ public class BetaPlay {
 		GameType gameType = GameType.KENO;
 		int playSet = 4;
 		int histDeep = 20;
-		int histShiftFrom = 4; 
-		int histShiftTo = 3;
+		int histShiftFrom = 5; 
+		int histShiftTo = 2;
 		int[] matchingMask = new int[] { 100, 100, 0, 0, 0 };
 		
 		System.out.println("multyPlay # BetaPlay " + System.currentTimeMillis());
@@ -41,7 +41,7 @@ public class BetaPlay {
 		for (int indexHistShift = histShiftFrom; indexHistShift >= histShiftTo; indexHistShift--) {
 			CPlay cPlay = new CPlay(gameType, playSet, histDeep, indexHistShift, matchingMask);
 			List<MatchingReport> reports = cPlay.makePlayReports();
-			double[] frequencyReport = new FreqReporter(gameType, reports).makeFrequencyReport();
+			double[] frequencyReport = new FreqReporterSingle(gameType, reports).makeFrequencyReport();
 			
 			HitReporterSingle hitReporter = new HitReporterSingle();
 			double[] hitReports = hitReporter.makeHitReports(gameType, histDeep, indexHistShift, frequencyReport);
@@ -82,14 +82,17 @@ public class BetaPlay {
 		List<MatchingReport> reports = cPlay.makePlayReports();
 		cPlay.displayPlayReports(reports);
 		
-		FreqReporter freqReporter = new FreqReporter(gameType, reports);
+		FreqReporterSingle freqReporter = new FreqReporterSingle(gameType, reports);
 		double[] frequencyReport = freqReporter.makeFrequencyReport(); 
 		freqReporter.displayFrequencyReports(histShift);
 		
 		HitReporterSingle hitReporter = new HitReporterSingle();
 		double[] hitReports = hitReporter.makeHitReports(gameType, histDeep, histShift, frequencyReport);
 		String isolatedHitReportsReport = hitReporter.reportIsolatedHitReports(hitReports);
-		System.out.println("hitReport " + histShift + ": " + isolatedHitReportsReport + "\n");
+		System.out.println("hitReport S " + histShift + ": " + isolatedHitReportsReport + "\n");
+		
+		FreqReporterDouble freqReporter2 = new FreqReporterDouble(gameType, reports);
+		freqReporter2.displayFrequencyReports(histShift);
 	}
 
 }

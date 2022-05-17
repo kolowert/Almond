@@ -6,9 +6,9 @@ import fun.kolowert.serv.Serv;
 
 public class MatchingReport {
 
-	private int[] playCombination;
-	private int[] matching;
-	private String textUnit;
+	private final int[] playCombination;
+	private final int[] matching;
+	private final String textUnit;
 
 	public MatchingReport(int[] playCombination, int[] matching, String textUnit) {
 		super();
