@@ -9,28 +9,29 @@ import java.util.Map;
 
 import fun.kolowert.common.GameType;
 import fun.kolowert.common.MatchingReport;
-import fun.kolowert.serv.Serv;
 
 /**
  * It is the same as FreqReporterSingle but for couples It counts appearance of
- * ball-couples in combinations from MatchingReport
+ * multi-ball-bet in combinations from MatchingReport
  */
-public class FreqReporterDouble {
+public class FreqReporterMulti {
 	private final GameType gameType;
+	private final int betSize;
 	private final List<MatchingReport> matchingReports;
-	private final Map<int[], FreqReportForCouple> frequencyReport;
+	private final Map<int[], FreqReportMultiBet> frequencyReport;
 
-	public FreqReporterDouble(GameType gameType, List<MatchingReport> matchingReports) {
+	public FreqReporterMulti(GameType gameType, int betSize, List<MatchingReport> matchingReports) {
 		this.gameType = gameType;
+		this.betSize = betSize;
 		this.matchingReports = matchingReports;
 		frequencyReport = prepareFrequencyReport();
 	}
 
-	private Map<int[], FreqReportForCouple> prepareFrequencyReport() {
+	private Map<int[], FreqReportMultiBet> prepareFrequencyReport() {
 
-		Map<int[], FreqReportForCouple> map = new HashMap<>();
+		Map<int[], FreqReportMultiBet> map = new HashMap<>();
 		
-		Combinator combinator = new Combinator(2, gameType.getGameSetSize());
+		Combinator combinator = new Combinator(betSize, gameType.getGameSetSize());
 		
 		// All couple cycle ---
 		while (combinator.hasNext()) {
@@ -41,14 +42,14 @@ public class FreqReporterDouble {
 				
 				int[] playCombination = matchingReport.getPlayCombination();
 				
-				if (isCoupleMatchingCombination(2, couple, playCombination)) {
+				if (isCoupleMatchingCombination(couple, playCombination)) {
 					
 					if (map.containsKey(couple)) {
-						FreqReportForCouple coupleReport = map.get(couple);
+						FreqReportMultiBet coupleReport = map.get(couple);
 						coupleReport.increaseFrequency();
 						map.replace(couple, coupleReport);
 					} else {
-						FreqReportForCouple coupleReport = new FreqReportForCouple(couple);
+						FreqReportMultiBet coupleReport = new FreqReportMultiBet(couple);
 						coupleReport.increaseFrequency();
 						map.put(couple, coupleReport);
 					}	
@@ -58,9 +59,9 @@ public class FreqReporterDouble {
 		return map;
 	}
 	
-	private boolean isCoupleMatchingCombination(int multiplier, int[] couple, int[] comb) {
+	private boolean isCoupleMatchingCombination(int[] bet, int[] comb) {
 		int counter = 0;
-		for (int c : couple) {
+		for (int c : bet) {
 			for (int k : comb) {
 				if (c == k) {
 					++counter;
@@ -68,39 +69,33 @@ public class FreqReporterDouble {
 				}
 			}
 		}		
-		return counter == multiplier;
+		return counter == betSize;
 	}
 	
-	public FreqReportForCouple[] makeFrequencyReport() {
-		Collection<FreqReportForCouple> collection = frequencyReport.values();
-		List<FreqReportForCouple> list = new ArrayList<>(collection);
-		FreqReportForCouple[] result = list.toArray(new FreqReportForCouple[0]);
+	public FreqReportMultiBet[] makeFrequencyReport() {
+		Collection<FreqReportMultiBet> collection = frequencyReport.values();
+		List<FreqReportMultiBet> list = new ArrayList<>(collection);
+		FreqReportMultiBet[] result = list.toArray(new FreqReportMultiBet[0]);
 		Arrays.sort(result);
 		return result;
 	}
 
 	/**
-	 * It prints to out: 1|'frequency'('aBall-bBall'), 2|'frequency'('aBall-bBall'), .. n|'frequency'('aBall-bBall')
-	 * 
+	 * It prints to out: 1|'frequency'('aBall-bBall-..nBall'), 2|'frequency'('aBall-bBall-..nBall'), .. n|'frequency'('aBall-bBall-..nBall')
 	 * @param histShift - only for completing String-report
 	 */
-	public void displayFrequencyReports(int histShift, FreqReportForCouple[] freqReport2) {
+	public void displayFrequencyReports(int histShift, FreqReportMultiBet[] freqReport2) {
 		int c = 0;
 		StringBuilder sb = new StringBuilder();
-		
+		int reportLength = 10;
 		for (int i = freqReport2.length - 1; i >= 0; i--) {
-			int[] couple = freqReport2[i].getBallCouple();
 			sb	.append(++c)
 				.append("|")
-				.append(Serv.normInt3(freqReport2[i].getFrequency()))
-				.append("(")
-				.append(Serv.normInt2(couple[0]))
-				.append(" ")
-				.append(Serv.normInt2(couple[1]))
-				.append(")")
+				.append(freqReport2[i].report())
 				.append("  ");
+			if (--reportLength <= 0) { break; }
 		}
-		System.out.println("frqReport D " + histShift + " > " + sb.toString());
+		System.out.println("frqReport M " + histShift + " > " + sb.toString());
 	}
 	
 	

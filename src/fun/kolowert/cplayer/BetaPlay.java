@@ -69,7 +69,8 @@ public class BetaPlay {
 		int playSet = 4;
 		int histDeep = 40;
 		int histShift = 1;
-		int[] matchingMask = new int[] { 100, 100, 0, 0, 0 };
+		int betSize = 3;
+		int[] matchingMask = new int[] { 100, 100, 4, 0, 0 };
 
 		CPlay cPlay = new CPlay(gameType, playSet, histDeep, histShift, matchingMask);
 		
@@ -91,7 +92,7 @@ public class BetaPlay {
 		String isolatedHitReportsReport = hitReporter.reportIsolatedHitReports(hitReports);
 		System.out.println("hitReport S " + histShift + ": " + isolatedHitReportsReport + "\n");
 		
-		FreqReporterDouble freqReporter2 = new FreqReporterDouble(gameType, reports);
+		FreqReporterMulti freqReporter2 = new FreqReporterMulti(gameType, betSize, reports);
 		freqReporter2.displayFrequencyReports(histShift);
 	}
 
