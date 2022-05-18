@@ -19,12 +19,25 @@ public class FreqReporterSingle {
 
 	private final GameType gameType;
 	private final List<MatchingReport> matchingReports;
-	private final double[] frequencyReport;
+	private double[] frequencyReport;
+	private boolean isReportMade = false;
 
 	public FreqReporterSingle(GameType gameType, List<MatchingReport> matchingReports) {
 		this.gameType = gameType;
 		this.matchingReports = matchingReports;
-		frequencyReport = prepareFrequencyReport();
+	}
+
+	/**
+	 * @return array of double where whole part is frequency and fractional part is
+	 *         ball.
+	 */
+	public double[] getFrequencyReport() {
+		if (!isReportMade) {
+			frequencyReport = prepareFrequencyReport();
+			isReportMade = true;
+			return frequencyReport;
+		}
+		return frequencyReport;
 	}
 
 	private double[] prepareFrequencyReport() {
@@ -46,25 +59,18 @@ public class FreqReporterSingle {
 	}
 
 	/**
-	 * @return array of double where whole part is frequency and fractional part is
-	 *         ball.
-	 */
-	public double[] makeFrequencyReport() {
-		return frequencyReport;
-	}
-
-	/**
 	 * It prints to out: 1|'frequency'('ball'), 2|'frequency'('ball'), ...
 	 * n|'frequency'('ball')
 	 * 
 	 * @param histShift - only for completing String-report
 	 */
 	public void displayFrequencyReports(int histShift) {
+		double[] freqReport = getFrequencyReport();
 		int c = 0;
 		StringBuilder sb = new StringBuilder();
-		for (int i = frequencyReport.length - 1; i >= 0; i--) {
-			String ball = Serv.normInt2((int) (0.5 + 100.0 * (frequencyReport[i] - (int) frequencyReport[i])));
-			String frequency = Serv.normInt3((int) frequencyReport[i]);
+		for (int i = freqReport.length - 1; i >= 0; i--) {
+			String ball = Serv.normInt2((int) (0.5 + 100.0 * (freqReport[i] - (int) freqReport[i])));
+			String frequency = Serv.normInt3((int) freqReport[i]);
 			sb.append(++c).append("|").append(frequency).append("(").append(ball).append(")").append("  ");
 		}
 		System.out.println("frqReport S " + histShift + " > " + sb.toString());

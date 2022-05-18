@@ -32,7 +32,8 @@ public class FreqReporterMulti {
 	}
 	
 	private FreqReportMultiBet[] makeFrequencyReport() {
-		List<FreqReportMultiBet> rawReport = new ArrayList<>();
+		int rSize = (int) Combinator.calculateCombinations(betSize, gameType.getGameSetSize());
+		List<FreqReportMultiBet> rawReport = new ArrayList<>(rSize + 1);
 		Combinator combinator = new Combinator(betSize, gameType.getGameSetSize());
 		
 		// All bets cycle ---
@@ -83,7 +84,7 @@ public class FreqReporterMulti {
 				.append("  ");
 			if (--reportLength <= 0) { break; }
 		}
-		System.out.println("frqReportM" + betSize + " " + histShift + " > " + sb.toString());
+		System.out.println("frqReprt M" + betSize + " " + histShift + " > " + sb.toString());
 	}
 	
 	
