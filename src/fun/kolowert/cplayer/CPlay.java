@@ -9,13 +9,14 @@ import fun.kolowert.common.MatchingReport;
 import fun.kolowert.serv.Timer;
 
 public class CPlay {
+	
+	private final GameType gameType;
+	private final int combSetSize;
+	private final int gameSetSize;
 
-	private int combSetSize;
-	private int gameSetSize;
+	private final int[] matchingMask;
 
-	private int[] matchingMask;
-
-	private HistAnalizer histAnalyzer;
+	private final HistAnalizer histAnalyzer;
 
 	public CPlay(GameType gameType, int combSize, int histDeep, int histShift, int[] matchingMask) {
 		if (gameType == GameType.KENO && gameType.getCombSetSize() > combSize) {
@@ -23,7 +24,8 @@ public class CPlay {
 		} else {
 			combSetSize = gameType.getCombSetSize();
 		}
-
+		
+		this.gameType = gameType;
 		this.gameSetSize = gameType.getGameSetSize();
 		this.matchingMask = matchingMask;
 
@@ -48,8 +50,8 @@ public class CPlay {
 
 		while (!combinator.isFinished()) {
 			int[] playCombination = combinator.makeNext();
-			MatchingReport analizReport = histAnalyzer.makeMatchingReport(playCombination, "-");
-			int[] matching = analizReport.getMatching();
+			MatchingReport matchingReport = histAnalyzer.makeMatchingReport(playCombination, "-");
+			int[] matching = matchingReport.getMatching();
 			if (       matching[matching.length - 1] <= matchingMask[4] 
 					&& matching[matching.length - 2] <= matchingMask[3]
 					&& matching[matching.length - 3] <= matchingMask[2]
@@ -57,7 +59,8 @@ public class CPlay {
 					&& matching[matching.length - 5] <= matchingMask[0]
 				) 
 			{
-				reports.add(analizReport);
+				matchingReport.makeScore(gameType);
+				reports.add(matchingReport);
 			}
 		}
 		return reports;

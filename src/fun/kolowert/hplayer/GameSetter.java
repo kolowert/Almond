@@ -15,6 +15,9 @@ public class GameSetter {
 		case KOLO64:
 			coder = new CoderKolo64();
 			break;
+		case KOLO95:
+			coder = new CoderKolo95();
+			break;	
 		case SHA256:
 			coder = new Coder256Sha();
 			break;

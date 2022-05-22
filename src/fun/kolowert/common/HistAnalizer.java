@@ -7,10 +7,12 @@ import fun.kolowert.serv.Serv;
 
 public class HistAnalizer {
 	
+	private final GameType gameType;
 	private final HistHandler histHandler;
 	private final List<int[]> histCombinations;
 
 	public HistAnalizer(GameType gameType, int histDeep, int histShift) {
+		this.gameType = gameType;
 		histHandler = new HistHandler(gameType, histDeep, histShift);
 		histCombinations = histHandler.getHistCombinations();
 	}
@@ -40,8 +42,8 @@ public class HistAnalizer {
 			int matches = countMatches(ballSet, comb);
 			analizResult[matches] += 1;
 		}
-
-		return Serv.normalizeArray(analizResult, "[", "]");
+		int resultsScore = MatchingReport.countScore(gameType, analizResult);
+		return Serv.normalizeArray(analizResult, "[", "]" + " " + Serv.normIntX(resultsScore, 5, " "));
 	}
 
 	private int countMatches(int[] a, int[] b) {

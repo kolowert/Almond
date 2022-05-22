@@ -1,5 +1,7 @@
 package fun.kolowert.hplayer;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -16,21 +18,20 @@ public class HPlay {
 
 	private static final int COMB_SIZE = 8;
 	private static final int HIST_DEEP = 100;
-	private static final int HIST_SHIFT = 1;
+	private static final int HIST_SHIFT = 0;
 
-	private static final GameType GAME_TYPE = GameType.MAXI;
+	private static final GameType GAME_TYPE = GameType.SUPER;
 	private static final CoderType CODER_TYPE = CoderType.KOLO95;
 	
-	private static List<int[]> histCombinations = new HistHandler(GAME_TYPE, 1, HIST_SHIFT + 1).getHistCombinations(); 
-	private static String prelastComb = Arrays.toString(histCombinations.get(0)).replaceAll("\\[|\\]|,", ""); 
-	
-	//		convertToCombinations(new FileHand("resources/hist/" + GAME_TYPE.getHistFileName()).read(), 1, 1); // "5 11 12 24 51 52";
+	private static List<int[]> histCombinations = new HistHandler(GAME_TYPE, 2, HIST_SHIFT).getHistCombinations();
+	private static String preLastComb = Arrays.toString(histCombinations.get(1)).replaceAll("\\[|\\]|,", "");
+	private static String theLastComb = Arrays.toString(histCombinations.get(0)).replaceAll("\\[|\\]|,", "");
 	
 	private static final String[] SEEDS = { "Garage", "Opel Meriva", "Renault Grand Modus", "Ford Fusion +", 
-			"Skoda Roomster", "Skoda Yeti",
+			"Skoda Roomster", "Skoda Yeti", "Na variata", "Navariata", "На вар'ята",
 			"A car worth up to $9 thousand, with: gasoline engine, manual gearbox, conditioner, 4 or 5 doors; "
 					+ "up to 150k km mileage, not damaged, no accidents, located in western Ukraine, not older "
-					+ "than 2008 year", "Crack the System", prelastComb };
+					+ "than 2008 year", "Crack the System", preLastComb, theLastComb };
 
 	private int combSetSize;
 	private int gameSetSize;
@@ -47,6 +48,8 @@ public class HPlay {
 		}
 
 		gameSetSize = GAME_TYPE.getGameSetSize();
+		
+		System.out.println(selfReport());
 	}
 
 	public static void main(String[] args) {
@@ -57,7 +60,7 @@ public class HPlay {
 
 		hPlay.playBook(false);
 
-		hPlay.buncher(true);
+		hPlay.buncher(false);
 
 		System.out.println("\n~~~ FINISH ~~~");
 		System.out.println(timer.reportExtended());
@@ -168,6 +171,12 @@ public class HPlay {
 			String labe = "  " + combSetSize + "/" + gameSetSize;
 			System.out.println(pn + labe + "\t" + report.report());
 		}
+	}
+	
+	private String selfReport() {
+		return "COMB_SIZE:" + COMB_SIZE + ", HIST_DEEP:" + HIST_DEEP + ", HIST_SHIFT:" + HIST_SHIFT 
+				+ ", GAME_TYPE:" + GAME_TYPE + ", CODER_TYPE:" + CODER_TYPE
+				+ " --- " + LocalDate.now() + " " + LocalTime.now();
 	}
 
 	/**

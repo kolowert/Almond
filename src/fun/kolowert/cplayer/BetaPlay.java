@@ -18,9 +18,9 @@ public class BetaPlay {
 	public static void main(String[] args) {
 		Timer timer = new Timer();
 
-		//demoPlay();
+		demoPlay();
 		//multyPlay();
-		couplesPlay();
+		//couplesPlay();
 
 		System.out.println("\nFINISH ~ " + timer.reportExtended());
 	}
@@ -28,7 +28,7 @@ public class BetaPlay {
 	public static void multyPlay() {
 
 		GameType gameType = GameType.KENO;
-		int playSet = 4;
+		int playSet = 3;
 		int histDeep = 20;
 		int histShiftFrom = 5;
 		int histShiftTo = 2;
@@ -68,11 +68,11 @@ public class BetaPlay {
 	}
 
 	public static void demoPlay() {
-		GameType gameType = GameType.SUPER;
-		int playSet = 6;
-		int histDeep = 52;
+		GameType gameType = GameType.KENO;
+		int playSet = 4;
+		int histDeep = 40;
 		int histShift = 5;
-		int[] matchingMask = new int[] { 0, 0, 0, 0, 0 };
+		int[] matchingMask = new int[] { 100, 100, 10, 0, 0 };
 		int betSize = 3;
 
 		System.out.println(
@@ -84,7 +84,7 @@ public class BetaPlay {
 		CPlay cPlay = new CPlay(gameType, playSet, histDeep, histShift, matchingMask);
 
 		List<MatchingReport> reports = cPlay.makePlayReports();
-		// cPlay.displayPlayReports(reports);
+		cPlay.displayPlayReports(reports);
 		System.out.println(reports.size() + " lines in frequency reports");
 
 		FreqReporterSingle freqReporter = new FreqReporterSingle(gameType, reports);
@@ -112,10 +112,10 @@ public class BetaPlay {
 
 	public static void couplesPlay() {
 		GameType gameType = GameType.KENO;
-		int playSet = 4;
+		int playSet = 3;
 		int histDeep = 24;
 		int histShift = 1;
-		int multiShift = 5;
+		int multiShift = 10;
 		int[] matchingMask = new int[] { 100, 100, 0, 0, 0 };
 
 		System.out.println(
@@ -129,8 +129,8 @@ public class BetaPlay {
 			CPlay cPlay = new CPlay(gameType, playSet, histDeep, shift, matchingMask);
 
 			List<MatchingReport> reports = cPlay.makePlayReports();
-			// cPlay.displayPlayReports(reports);
-			// System.out.println(reports.size() + " lines in frequency reports");
+			//cPlay.displayPlayReports(reports);
+			//System.out.println(reports.size() + " lines in frequency reports");
 
 			FreqReporterSingle freqReporter = new FreqReporterSingle(gameType, reports);
 			double[] frequencyReport = freqReporter.getFrequencyReport();
