@@ -1,30 +1,29 @@
 package fun.kolowert.cplayer;
 
 import java.util.Arrays;
-import java.util.List;
 
 import fun.kolowert.common.GameType;
-import fun.kolowert.common.MatchingReport;
+import fun.kolowert.common.MatchingReportPool;
 import fun.kolowert.serv.Serv;
 
 /**
- * It should be created once for particular game type and matching reports. It
+ * It should be created once for particular game type and Matching Reports Pool. It
  * counts appearance of balls in combinations from MatchingReport and makes
  * array of double where whole part is frequency and fractional part is ball.
  * 
  * @param GameType
- * @param matchingReports
+ * @param matchingReportPool
  */
-public class FreqReporterSingle {
-
+public class FreqReporterOnPoolSimple {
+	
 	private final GameType gameType;
-	private final List<MatchingReport> matchingReports;
+	private final MatchingReportPool matchingReportPool;
 	private double[] frequencyReport;
 	private boolean isReportMade = false;
 
-	public FreqReporterSingle(GameType gameType, List<MatchingReport> matchingReports) {
+	public FreqReporterOnPoolSimple(GameType gameType, MatchingReportPool matchingReportPool) {
 		this.gameType = gameType;
-		this.matchingReports = matchingReports;
+		this.matchingReportPool = matchingReportPool;
 	}
 
 	/**
@@ -35,7 +34,6 @@ public class FreqReporterSingle {
 		if (!isReportMade) {
 			frequencyReport = prepareFrequencyReport();
 			isReportMade = true;
-			return frequencyReport;
 		}
 		return frequencyReport;
 	}
@@ -43,8 +41,9 @@ public class FreqReporterSingle {
 	private double[] prepareFrequencyReport() {
 		// Count Frequency of balls in matchingReports
 		int[] counter = new int[gameType.getGameSetSize() + 1];
-		for (MatchingReport report : matchingReports) {
-			for (int ball : report.getPlayCombination()) {
+		
+		for (int[] playCombination : matchingReportPool.getPlayCombinations()) {
+			for (int ball : playCombination) {
 				++counter[ball];
 			}
 		}
@@ -76,4 +75,5 @@ public class FreqReporterSingle {
 		System.out.println("frqReport S " + histShift + " > " + sb.toString());
 	}
 
+	
 }

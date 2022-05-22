@@ -78,9 +78,9 @@ public class CoupleHitReporter {
 			sb
 				.append(hits)
 				.append("(")
-				.append(Serv.normInt2(aBall))
+				.append(Serv.normIntX(aBall, 2, "0"))
 				.append("-")
-				.append(Serv.normInt2(bBall))
+				.append(Serv.normIntX(bBall, 2, "0"))
 				.append(") ");
 		}
 		

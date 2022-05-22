@@ -6,6 +6,7 @@ import java.util.List;
 import fun.kolowert.common.GameType;
 import fun.kolowert.common.MatchingReporter;
 import fun.kolowert.common.MatchingReport;
+import fun.kolowert.serv.Serv;
 import fun.kolowert.serv.Timer;
 
 public class CPlay {
@@ -28,18 +29,6 @@ public class CPlay {
 		this.matchingMask = matchingMask;
 
 		matchingReporter = new MatchingReporter(gameType, histDeep, histShift);
-	}
-
-	// debugging
-	public static void main(String[] args) {
-		CPlay cPlay = new CPlay(GameType.KENO, 4, 24, 3, new int[] { 100, 100, 0, 0, 0 });
-		Timer timer = new Timer();
-
-		List<MatchingReport> reports = cPlay.makePlayReports();
-		cPlay.displayPlayReports(reports);
-
-		System.out.println("\n~~~ FINISH ~~~");
-		System.out.println(timer.reportExtended());
 	}
 
 	public List<MatchingReport> makePlayReports() {
@@ -66,10 +55,21 @@ public class CPlay {
 	public void displayPlayReports(List<MatchingReport> reports) {
 		int counter = 0;
 		for (MatchingReport report : reports) {
-			String pn = ++counter < 10 ? "00" + counter : counter < 100 ? "0" + counter : "" + counter;
 			String labe = "  " + combSetSize + "/" + gameSetSize;
-			System.out.println(pn + labe + "\t" + report.report());
+			System.out.println(Serv.normIntX(++counter, 3, " ") + labe + "\t" + report.report());
 		}
 	}
+	
+	// debugging
+	public static void main(String[] args) {
+		CPlay cPlay = new CPlay(GameType.KENO, 4, 24, 3, new int[] { 100, 100, 0, 0, 0 });
+		Timer timer = new Timer();
 
+		List<MatchingReport> reports = cPlay.makePlayReports();
+		cPlay.displayPlayReports(reports);
+
+		System.out.println("\n~~~ FINISH ~~~");
+		System.out.println(timer.reportExtended());
+	}
+	
 }

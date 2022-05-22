@@ -16,33 +16,13 @@ public class MatchingReporter {
 	}
 
 	public MatchingReport makeMatchingReport(int[] playCombination, String textUnit) {
-		int[] analizResult = new int[1 + playCombination.length];
+		int[] matching = new int[1 + playCombination.length];
 		for (int[] comb : histCombinations) {
 			int matches = countMatches(playCombination, comb);
-			analizResult[matches] += 1;
+			matching[matches] += 1;
 		}
-		return new MatchingReport(gameType, playCombination, analizResult, textUnit);
+		return new MatchingReport(gameType, playCombination, matching, textUnit);
 	}
-
-	/**
-	 * It count matches balls in combination from parameter and balls in history
-	 * combinations It takes history combinations from file in resources folder
-	 * 
-	 * @param ballSet  to analyze
-	 * @param histDeep -> deep in history to analyze
-	 * @return string report (like array of integers) with matches for 0, 1, 2, 3, 4
-	 *         and more balls (depends on gameType)
-	 */
-//	public String reportMatches(int[] ballSet) {
-//		int[] analizResult = new int[1 + ballSet.length];
-//
-//		for (int[] comb : histCombinations) {
-//			int matches = countMatches(ballSet, comb);
-//			analizResult[matches] += 1;
-//		}
-//		int resultsScore = MatchingReport.countScore(gameType, analizResult);
-//		return Serv.normalizeArray(analizResult, "[", "]" + " " + Serv.normIntX(resultsScore, 5, " "));
-//	}
 
 	private int countMatches(int[] a, int[] b) {
 		int counter = 0;

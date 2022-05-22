@@ -21,15 +21,13 @@ public class Serv {
 	public static String normalizeArray(int[] arr) {
 		return normalizeArray(arr, "< ", " >");
 	}
-
-	public static String normInt2(int n) {
-		return n < 10 ? "0" + n : "" + n;
-	}
-
-	public static String normInt3(int n) {
-		return n < 10 ? "00" + n : n < 100 ? "0" + n : "" + n;
-	}
-
+	
+	/**
+	 * @param number to norm
+	 * @param length for normed result
+	 * @param placeHolder before number
+	 * @return String like "##ddd" where # - placeholder; d - digit of number
+	 */
 	public static String normIntX(int n, int length, String placeHolder) {
 		String s = String.valueOf(n);
 		int y = length - s.length();
@@ -41,7 +39,20 @@ public class Serv {
 		sb.append(s);
 		return sb.toString();
 	}
-
+	
+	public static String normDouble2(double d) {
+		String s = "" + 0.01 * (int) (100.0 * (d + 0.005));
+		if (s.length() > 4) {
+			return s.substring(0, 4);
+		}
+		int z = 4 - s.length();
+		StringBuilder sb = new StringBuilder(s);
+		for (int i = 0; i < z; i++) {
+			sb.append("0");
+		}
+		return sb.toString();
+	}
+	
 	public static String normDouble4(double d) {
 		String s = "" + 0.0001 * (int) (10000.0 * (d + 0.00005));
 		if (s.length() > 6) {

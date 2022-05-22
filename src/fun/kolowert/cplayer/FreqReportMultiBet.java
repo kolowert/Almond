@@ -57,9 +57,9 @@ public class FreqReportMultiBet implements Comparable<FreqReportMultiBet> {
 	
 	public String report() {
 		StringBuilder sb = new StringBuilder();
-		sb.append(Serv.normInt3(frequency)).append("(");
+		sb.append(Serv.normIntX(frequency, 3, "0")).append("(");
 		for (int b : multiBet) {
-			sb.append(Serv.normInt2(b)).append(" ");
+			sb.append(Serv.normIntX(b, 2, "0")).append(" ");
 		}
 		String result = sb.toString();
 		return result.substring(0, result.length() - 1) + ")";

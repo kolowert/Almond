@@ -1,8 +1,5 @@
 package fun.kolowert.cplayer;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import fun.kolowert.common.GameType;
 import fun.kolowert.common.MatchingReporter;
 import fun.kolowert.serv.Serv;
@@ -10,23 +7,18 @@ import fun.kolowert.serv.Serv;
 public class HitReporterSingle {
 	
 	public double[] makeHitReports(GameType gameType, int histDeep, int histShift, double[] frequencyReport) {
-		int[] bigSizes = { 10, 20, 30, 40, 50, 60, 70, 80 };
-		int smallFreq = 5;
+		int[] bigSizes = { 2, 3, 4, 5, 6, 8, 10, 12 };
 		
-		double[] result = new double[bigSizes.length + 1];
+		double[] result = new double[bigSizes.length];
 		
-		MatchingReporter histAnalyzer = new MatchingReporter(gameType, histDeep, histShift);
-		int[] nextLineOfHistBlock = histAnalyzer.getHistHandler().getNextLineOfHistBlock(histShift);
+		MatchingReporter matchingReporter = new MatchingReporter(gameType, histDeep, histShift);
+		int[] nextLineOfHistBlock = matchingReporter.getHistHandler().getNextLineOfHistBlock(histShift);
 		
 		for (int ind = 0; ind < bigSizes.length; ind++) {
 			int[] bigFrequencySet = makeBigFrequencySet(frequencyReport, bigSizes[ind]);
 			int bigHitCount = countHits(bigFrequencySet, nextLineOfHistBlock);
 			result[ind] = bigHitCount + 0.01 * bigFrequencySet.length;
 		}
-		
-		int[] smallFrequencySet = makeSmallFrequencySet(frequencyReport, smallFreq);
-		int smallHitCount = countHits(smallFrequencySet, nextLineOfHistBlock);
-		result[bigSizes.length] = smallHitCount + 0.01 * smallFrequencySet.length;
 
 		return result;
 	}
@@ -38,7 +30,7 @@ public class HitReporterSingle {
 			int setSize = (int) (0.5 + 100 * (r - (int) r));
 			double hitCoef = 1.0 * hitCount / setSize;
 			String bigHitReport = String.format(" %d/%d-%s ", hitCount, setSize, Serv.normDouble4(hitCoef));
-			sb.append(bigHitReport).append("  ");
+			sb.append(bigHitReport).append("   ");
 		}
 		return sb.toString();
 	}
@@ -74,25 +66,6 @@ public class HitReporterSingle {
 			bigFrequencySet[counter] = (int) (0.5 + 100.0 * (frequencyReport[i] - (int) frequencyReport[i]));
 		}
 		return bigFrequencySet;
-	}
-
-	private int[] makeSmallFrequencySet(double[] frequencyReport, int n) {
-		List<Integer> smallFrequencySet = new ArrayList<>();
-		for (int i = 0; i < frequencyReport.length; i++) {
-			if (frequencyReport[i] > n + 1.0) {
-				break;
-			}
-			int ball = (int) (0.5 + 100.0 * (frequencyReport[i] - (int) frequencyReport[i]));
-			if (ball == 0) {
-				continue;
-			}
-			smallFrequencySet.add(ball);
-		}
-		int[] result = new int[smallFrequencySet.size()];
-		for (int i = 0; i < smallFrequencySet.size(); i++) {
-			result[i] = smallFrequencySet.get(i);
-		}
-		return result;
 	}
 
 	private int countHits(int[] a, int[] b) {
