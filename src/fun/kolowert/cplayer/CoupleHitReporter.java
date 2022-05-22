@@ -1,7 +1,7 @@
 package fun.kolowert.cplayer;
 
 import fun.kolowert.common.GameType;
-import fun.kolowert.common.HistAnalizer;
+import fun.kolowert.common.MatchingReporter;
 import fun.kolowert.serv.Serv;
 
 public class CoupleHitReporter {
@@ -29,7 +29,7 @@ public class CoupleHitReporter {
 	private double[] makeReport() {
 		
 		// obtain next game-history line
-		HistAnalizer histAnalyzer = new HistAnalizer(gameType, 1, histShift);
+		MatchingReporter histAnalyzer = new MatchingReporter(gameType, 1, histShift);
 		int[] nextLineOfHistBlock = histAnalyzer.getHistHandler().getNextLineOfHistBlock(histShift);
 		
 		// obtain balls from frequency report

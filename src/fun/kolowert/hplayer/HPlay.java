@@ -8,10 +8,9 @@ import java.util.Collections;
 import java.util.List;
 
 import fun.kolowert.common.GameType;
-import fun.kolowert.common.HistAnalizer;
+import fun.kolowert.common.MatchingReporter;
 import fun.kolowert.common.HistHandler;
 import fun.kolowert.common.MatchingReport;
-import fun.kolowert.serv.Serv;
 import fun.kolowert.serv.Timer;
 
 public class HPlay {
@@ -70,15 +69,15 @@ public class HPlay {
 		if (!doit)
 			return;
 
-		HistAnalizer histAnalyzer = new HistAnalizer(GAME_TYPE, HIST_DEEP, HIST_SHIFT);
+		MatchingReporter matchingReporter = new MatchingReporter(GAME_TYPE, HIST_DEEP, HIST_SHIFT);
 		int counter = 0;
 		for (String seed : SEEDS) {
 			int[] playCombination = gameSetter.makeGameSet(combSetSize, gameSetSize, seed);
-			String matchingReport = histAnalyzer.reportMatches(playCombination);
+			MatchingReport matchingReport = matchingReporter.makeMatchingReport(playCombination, seed);
 			String pn = ++counter < 10 ? "0" + counter : "" + counter;
 			String labe = pn + "  " + combSetSize + "/" + gameSetSize;
 			System.out.println(
-					labe + "\t" + Serv.normalizeArray(playCombination) + "  " + matchingReport + "  " + seed);
+					labe + "\t" + matchingReport.report());
 		}
 	}
 
@@ -142,11 +141,11 @@ public class HPlay {
 
 	private List<MatchingReport> analyzeMatching(List<String> textUnits, boolean letCollectOnlyBest) {
 		List<MatchingReport> bestReports = new ArrayList<>();
-		HistAnalizer histAnalyzer = new HistAnalizer(GAME_TYPE, HIST_DEEP, HIST_SHIFT);
+		MatchingReporter matchingReporter = new MatchingReporter(GAME_TYPE, HIST_DEEP, HIST_SHIFT);
 
 		for (String textUnit : textUnits) {
 			int[] playCombination = gameSetter.makeGameSet(combSetSize, gameSetSize, textUnit);
-			MatchingReport analizReport = histAnalyzer.makeMatchingReport(playCombination, textUnit);
+			MatchingReport analizReport = matchingReporter.makeMatchingReport(playCombination, textUnit);
 			int[] matching = analizReport.getMatching();
 			if (!letCollectOnlyBest || 
 					(

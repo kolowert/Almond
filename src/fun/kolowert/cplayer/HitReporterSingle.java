@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fun.kolowert.common.GameType;
-import fun.kolowert.common.HistAnalizer;
+import fun.kolowert.common.MatchingReporter;
 import fun.kolowert.serv.Serv;
 
 public class HitReporterSingle {
@@ -15,7 +15,7 @@ public class HitReporterSingle {
 		
 		double[] result = new double[bigSizes.length + 1];
 		
-		HistAnalizer histAnalyzer = new HistAnalizer(gameType, histDeep, histShift);
+		MatchingReporter histAnalyzer = new MatchingReporter(gameType, histDeep, histShift);
 		int[] nextLineOfHistBlock = histAnalyzer.getHistHandler().getNextLineOfHistBlock(histShift);
 		
 		for (int ind = 0; ind < bigSizes.length; ind++) {

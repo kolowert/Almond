@@ -71,9 +71,9 @@ public class BetaPlay {
 		GameType gameType = GameType.KENO;
 		int playSet = 4;
 		int histDeep = 40;
-		int histShift = 5;
-		int[] matchingMask = new int[] { 100, 100, 10, 0, 0 };
-		int betSize = 3;
+		int histShift = 3;
+		int[] matchingMask = new int[] { 100, 100, 5, 0, 0 };
+//		int betSize = 3;
 
 		System.out.println(
 				"demoPlay # BetaPlay " + System.currentTimeMillis() + " " + LocalDate.now() + " " + LocalTime.now());
@@ -91,19 +91,19 @@ public class BetaPlay {
 		double[] frequencyReport = freqReporter.getFrequencyReport();
 		freqReporter.displayFrequencyReports(histShift);
 
-		CoupleHitReporter coupleReporter = new CoupleHitReporter(gameType, histShift, frequencyReport);
-		coupleReporter.displayReport();
+		//CoupleHitReporter coupleReporter = new CoupleHitReporter(gameType, histShift, frequencyReport);
+		//coupleReporter.displayReport();
 
 		HitReporterSingle hitReporter = new HitReporterSingle();
 		double[] hitReports = hitReporter.makeHitReports(gameType, histDeep, histShift, frequencyReport);
 		String isolatedHitReportsReport = hitReporter.reportIsolatedHitReports(hitReports);
 		System.out.println("hitReport S " + histShift + ": " + isolatedHitReportsReport + "\n");
 
-		FreqReporterMulti freqReporterMultic = new FreqReporterMulti(gameType, betSize - 1, reports);
-		freqReporterMultic.displayFrequencyReports(histShift);
-
-		FreqReporterMulti freqReporterMulti = new FreqReporterMulti(gameType, betSize, reports);
-		freqReporterMulti.displayFrequencyReports(histShift);
+//		FreqReporterMulti freqReporterMultic = new FreqReporterMulti(gameType, betSize - 1, reports);
+//		freqReporterMultic.displayFrequencyReports(histShift);
+//
+//		FreqReporterMulti freqReporterMulti = new FreqReporterMulti(gameType, betSize, reports);
+//		freqReporterMulti.displayFrequencyReports(histShift);
 
 //		FreqReporterMulti freqReporterMultis = new FreqReporterMulti(gameType, betSize + 1, reports);
 //		freqReporterMultis.displayFrequencyReports(histShift);
