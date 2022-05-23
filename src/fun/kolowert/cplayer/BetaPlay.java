@@ -1,6 +1,5 @@
 package fun.kolowert.cplayer;
 
-import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.Arrays;
 
@@ -14,25 +13,27 @@ import fun.kolowert.serv.Timer;
  */
 public class BetaPlay {
 
-	private static final GameType gameType = GameType.SUPER;
-	private static final int playSet = 5;
-	private static final int histDeep = 72;
+	private static final GameType gameType = GameType.KENO;
+	private static final int playSet = 4;
+	private static final int histDeep = 32;
 	private static final int histShift = 1;
-	private static final int histShifts = 20;
-	private static final int[] matchingMask = new int[] { 100, 100, 0, 0, 0, 0 };
+	private static final int histShifts = 3;
+	private static final int[] matchingMask = new int[] { 100, 100, 3, 0, 0 };
 
 	private static final int[] hitMaskPlain = { 2, 3, 4, 5, 6, 8, 10, 12, 18 };
-	private static final int[] hitMaskIsolated = { 2, 4, 6, 8, 10, 12, 14, 16, 18 };
+	private static final int[] hitMaskIsolated = { 2, 4, 6, 8, 10, 12, 14, 16, 18 /*, 20, 22, 24, 26, 28, 30, 32, 34, 36,
+			38, 40*/ };
 
 	public static void main(String[] args) {
 		Timer timer = new Timer();
 
-		boolean display = true;
+		boolean display = false;
 		poolPlay(display);
 
-		boolean plainHits = true;
-		boolean isolatedHits = true;
-		multiPlay(plainHits, isolatedHits);
+		boolean plainHits = false;
+		boolean isolatedHits = false;
+		boolean pureFreqReport = true;
+		multiPlay(plainHits, isolatedHits, pureFreqReport);
 
 		System.out.println("\nFINISH ~ " + timer.reportExtended());
 	}
@@ -40,10 +41,9 @@ public class BetaPlay {
 	public static void poolPlay(boolean display) {
 		Timer timer = new Timer();
 
-		System.out.println("BetaPlay # poolPlay # " + System.currentTimeMillis() + " " + LocalDate.now() + " "
-				+ LocalTime.now());
-		System.out.println("gameType:" + gameType.name() + " playSet:" + playSet + " histDeep:" + histDeep
-				+ " matchingMask:" + Arrays.toString(matchingMask));
+		System.out.println("~ Single ~ " + gameType.name() + " ~ playSet:" + playSet + " histDeep:" + histDeep
+				+ " matchingMask:" + Arrays.toString(matchingMask) + " histLine:" + histShift + "   "
+				+ LocalTime.now().toString().substring(0, 8));
 		System.out.println(Combinator.reportCombinationsQuantity(playSet, gameType.getGameSetSize()));
 
 		PoolPlay poolPlay = new PoolPlay(gameType, playSet, matchingMask);
@@ -62,12 +62,12 @@ public class BetaPlay {
 
 		System.out.println("poolPlay time - - -> " + timer.reportExtended() + "\n");
 	}
+	// ----------------------------------------------------------------------------------------------------------------
 
-	// ================================================================================================================
-	public static void multiPlay(boolean plainHits, boolean isolatedHits) {
-		System.out.println("multyPlay # BetaPlay " + System.currentTimeMillis());
-		System.out.println("gameType:" + gameType.name() + " playSet:" + playSet + " histDeep:" + histDeep
-				+ " matchingMask:" + Arrays.toString(matchingMask));
+	public static void multiPlay(boolean plainHits, boolean isolatedHits, boolean pureFreqReport) {
+		System.out.println("# Multy # " + gameType.name() + " # playSet:" + playSet + " histDeep:" + histDeep
+				+ " matchingMask:" + Arrays.toString(matchingMask) + " histLines:" + histShift + "/" + histShifts
+				+ "   " + LocalTime.now().toString().substring(0, 8));
 		System.out.println(Combinator.reportCombinationsQuantity(playSet, gameType.getGameSetSize()));
 
 		HitReporterSingle hitReporter = new HitReporterSingle();
@@ -85,6 +85,10 @@ public class BetaPlay {
 
 			FreqReporterOnPoolSimple freqReporter = new FreqReporterOnPoolSimple(gameType, pool);
 			double[] frequencyReport = freqReporter.getFrequencyReport();
+			
+			if (pureFreqReport) {
+				freqReporter.displayPureFrequencyReports(indexHistShift);
+			}
 
 			if (plainHits) {
 				double[] hitReports = hitReporter.makeHitReports(gameType, histDeep, indexHistShift, frequencyReport,
@@ -108,7 +112,8 @@ public class BetaPlay {
 						"hitReport isltd " + Serv.normIntX(indexHistShift, 2, " ") + ":  " + hitReportsReport + "");
 
 				for (int i = 0; i < isolatedHitAvgCoefSum.length; i++) {
-					isolatedHitAvgCoefSum[i] += 1.0 * (int) hitReports[i] / (100.0 * (hitReports[i] - (int) hitReports[i]));
+					isolatedHitAvgCoefSum[i] += 1.0 * (int) hitReports[i]
+							/ (100.0 * (hitReports[i] - (int) hitReports[i]));
 				}
 				++isolatedHitsCounter;
 			}
@@ -129,7 +134,8 @@ public class BetaPlay {
 			if (isolatedHitsCounter != 0) {
 				StringBuilder sb = new StringBuilder("IsolatedHit avgCoef >>  ");
 				for (int i = 0; i < isolatedHitAvgCoefSum.length; i++) {
-					sb.append(Serv.normDoubleX(isolatedHitAvgCoefSum[i] / isolatedHitsCounter, 4)).append("         ");
+					sb.append(Serv.normDoubleX(isolatedHitAvgCoefSum[i] / isolatedHitsCounter, 4))
+							.append("         ");
 				}
 				System.out.println("\n" + sb);
 			}
