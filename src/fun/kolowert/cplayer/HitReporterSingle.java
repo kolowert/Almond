@@ -29,7 +29,7 @@ public class HitReporterSingle {
 			int hitCount = (int) r;
 			int setSize = (int) (0.5 + 100 * (r - (int) r));
 			double hitCoef = 1.0 * hitCount / setSize;
-			String bigHitReport = String.format(" %d/%d-%s ", hitCount, setSize, Serv.normDouble4(hitCoef));
+			String bigHitReport = String.format(" %d/%d-%s ", hitCount, setSize, Serv.normDoubleX(hitCoef, 4));
 			sb.append(bigHitReport).append("   ");
 		}
 		return sb.toString();
@@ -50,7 +50,7 @@ public class HitReporterSingle {
 			setSizes += setSize;
 			
 			double hitCoef = 1.0 * hitCount / setSize;
-			String bigHitReport = String.format(" %d/%d-%s ", hitCount, setSize, Serv.normDouble4(hitCoef));
+			String bigHitReport = String.format(" %d/%d-%s ", hitCount, setSize, Serv.normDoubleX(hitCoef, 3));
 			sb.append(bigHitReport).append("\t");
 			
 			// replace old data in hitReports by new isolated

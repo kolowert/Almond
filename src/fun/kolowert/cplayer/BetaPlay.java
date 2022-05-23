@@ -16,16 +16,16 @@ public class BetaPlay {
 	
 	private static GameType gameType = GameType.KENO;
 	private static int playSet = 4;
-	private static int histDeep = 30;
-	private static int histShift = 100;
+	private static int histDeep = 80;
+	private static int histShift = 1;
 	private static int histShifts = 20;
-	private static int[] matchingMask = new int[] { 100, 100, 10, 0, 0 };
+	private static int[] matchingMask = new int[] { 100, 100, 100, 0, 0 };
 	
 	public static void main(String[] args) {
 		Timer timer = new Timer();
 		
-		//poolPlay();
-		multiPlay();
+		poolPlay();
+		//multiPlay();
 
 		System.out.println("\nFINISH ~ " + timer.reportExtended());
 	}
@@ -89,7 +89,7 @@ public class BetaPlay {
 		if (counter != 0) {
 			StringBuilder sb = new StringBuilder(" >>>>>  avgCoef:  ");
 			for (int i = 0; i < coefSum.length; i++) {
-				sb.append(Serv.normDouble4(coefSum[i] / counter)).append("  \t");
+				sb.append(Serv.normDoubleX(coefSum[i] / counter, 4)).append("  \t");
 			}
 			System.out.println("\n" + sb);
 		}

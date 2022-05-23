@@ -40,35 +40,15 @@ public class Serv {
 		return sb.toString();
 	}
 	
-	public static String normDouble2(double d) {
-		String s = "" + 0.01 * (int) (100.0 * (d + 0.005));
-		if (s.length() > 4) {
-			return s.substring(0, 4);
-		}
-		int z = 4 - s.length();
-		StringBuilder sb = new StringBuilder(s);
-		for (int i = 0; i < z; i++) {
-			sb.append("0");
-		}
-		return sb.toString();
+	public static String normDoubleX(double d, int x) {
+		int n = (int) d;
+		String sFraction = String.valueOf(d - n) + "0000000000000";
+		return String.valueOf(n) + sFraction.substring(1, 2 + x);
 	}
 	
-	public static String normDouble4(double d) {
-		String s = "" + 0.0001 * (int) (10000.0 * (d + 0.00005));
-		if (s.length() > 6) {
-			return s.substring(0, 6);
-		}
-		int z = 6 - s.length();
-		StringBuilder sb = new StringBuilder(s);
-		for (int i = 0; i < z; i++) {
-			sb.append("0");
-		}
-		return sb.toString();
-	}
-
 	public static void main(String[] args) {
-		for (int y = 64; y < 1_000_000; y *= 16) {
-			System.out.println(normIntX(y, 6, "#"));
+		for (double y = 3.1415; y < 1_000_000; y *= 10.0) {
+			System.out.println(normDoubleX(y, 2));
 		}
 	}
 

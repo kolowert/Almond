@@ -42,7 +42,7 @@ public class PoolPlay {
 					&& matching[matching.length - 5] <= matchingMask[0]
 				) 
 			{
-				String complition = Serv.normDouble2((100.0 * counter / combinations));
+				String complition = Serv.normDoubleX((100.0 * counter / combinations), 1);
 				pool.addRecord(playCombination, matching, complition);
 				if (display) {
 					System.out.println(pool.report(pool.size() - 1));
