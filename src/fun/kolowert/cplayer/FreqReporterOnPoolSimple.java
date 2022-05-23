@@ -75,13 +75,14 @@ public class FreqReporterOnPoolSimple {
 		System.out.println("frqReport S " + histShift + " > " + sb.toString());
 	}
 
-	public void displayPureFrequencyReports(int histShift) {
+	public String reportPureFrequencyReports(int histShift) {
 		double[] freqReport = getFrequencyReport();
 		StringBuilder sb = new StringBuilder();
 		for (int i = freqReport.length - 1; i >= 0; i--) {
 			String ball = Serv.normIntX((int) (0.5 + 100.0 * (freqReport[i] - (int) freqReport[i])), 2, "0");
 			sb.append(ball).append(",");
 		}
-		System.out.println("frqRep Pure " + histShift + ",  " + sb.toString());
+		String line = sb.toString();
+		return String.format("%s, %s", Serv.normIntX(histShift, 3, "0"), line.substring(0, line.length() - 4));
 	}
 }

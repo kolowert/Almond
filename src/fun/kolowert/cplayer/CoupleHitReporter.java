@@ -11,7 +11,7 @@ public class CoupleHitReporter {
 	private double[] frequencyReport;
 	private boolean isReportMade;
 	
-	public CoupleHitReporter(GameType gameType, int histShift, double[] frequencyReport) {
+	private CoupleHitReporter(GameType gameType, int histShift, double[] frequencyReport) {
 		this.gameType = gameType;
 		this.histShift = histShift;
 		this.frequencyReport = frequencyReport;

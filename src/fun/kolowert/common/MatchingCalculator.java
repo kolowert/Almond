@@ -16,12 +16,13 @@ public class MatchingCalculator {
 		return matching;
 	}
 
-	private static int countMatches(int[] a, int[] b) {
+	private static int countMatches(int[] playComb, int[] histComb) {
 		int counter = 0;
-		for (int x : a) {
-			for (int y : b) {
-				if (x == y) {
+		for (int playBall : playComb) {
+			for (int i = 1; i < histComb.length; i++) {
+				if (playBall == histComb[i]) {
 					++counter;
+					continue;
 				}
 			}
 		}

@@ -1,7 +1,9 @@
 package fun.kolowert.cplayer;
 
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import fun.kolowert.common.GameType;
 import fun.kolowert.common.MatchingReportPool;
@@ -13,16 +15,15 @@ import fun.kolowert.serv.Timer;
  */
 public class BetaPlay {
 
-	private static final GameType gameType = GameType.KENO;
-	private static final int playSet = 4;
-	private static final int histDeep = 32;
+	private static final GameType gameType = GameType.MAXI;
+	private static final int playSet = 5;
+	private static final int histDeep = 45;
 	private static final int histShift = 1;
 	private static final int histShifts = 3;
-	private static final int[] matchingMask = new int[] { 100, 100, 3, 0, 0 };
+	private static final int[] matchingMask = new int[] { 100, 100, 0, 0, 0, 0 };
 
-	private static final int[] hitMaskPlain = { 2, 3, 4, 5, 6, 8, 10, 12, 18 };
-	private static final int[] hitMaskIsolated = { 2, 4, 6, 8, 10, 12, 14, 16, 18 /*, 20, 22, 24, 26, 28, 30, 32, 34, 36,
-			38, 40*/ };
+	private static final int[] hitMaskPlain = { 5, 10, 15, 20, 25, 30, 35, 40, 45 };
+	private static final int[] hitMaskIsolated = { 5, 10, 15, 20, 25, 30, 35, 40, 45 };
 
 	public static void main(String[] args) {
 		Timer timer = new Timer();
@@ -70,8 +71,9 @@ public class BetaPlay {
 				+ "   " + LocalTime.now().toString().substring(0, 8));
 		System.out.println(Combinator.reportCombinationsQuantity(playSet, gameType.getGameSetSize()));
 
+		List<String> pureFreqReports = new ArrayList<>();
 		HitReporterSingle hitReporter = new HitReporterSingle();
-
+		
 		int poolSizeSum = 0;
 		double[] plainHitAvgCoefSum = new double[hitMaskPlain.length];
 		double[] isolatedHitAvgCoefSum = new double[hitMaskIsolated.length];
@@ -87,7 +89,7 @@ public class BetaPlay {
 			double[] frequencyReport = freqReporter.getFrequencyReport();
 			
 			if (pureFreqReport) {
-				freqReporter.displayPureFrequencyReports(indexHistShift);
+				pureFreqReports.add(freqReporter.reportPureFrequencyReports(indexHistShift));
 			}
 
 			if (plainHits) {
@@ -140,10 +142,17 @@ public class BetaPlay {
 				System.out.println("\n" + sb);
 			}
 		}
-
+		
 		if (counter != 0) {
 			int avgFreqReportLines = (int) (1.0 * poolSizeSum / counter);
 			System.out.println("\n" + avgFreqReportLines + "  avg lines in frequency reports");
+		}
+		
+		if (pureFreqReport) {
+			System.out.println("\nPure Frequency Reports ---");
+			for (String line : pureFreqReports) {
+				System.out.println(line);
+			}
 		}
 	}
 

@@ -17,30 +17,23 @@ public class MatchingReporter {
 
 	public MatchingReport makeMatchingReport(int[] playCombination, String textUnit) {
 		int[] matching = new int[1 + playCombination.length];
-		for (int[] comb : histCombinations) {
-			int matches = countMatches(playCombination, comb);
+		for (int[] histComb : histCombinations) {
+			int matches = countMatches(playCombination, histComb);
 			matching[matches] += 1;
 		}
 		return new MatchingReport(gameType, playCombination, matching, textUnit);
 	}
 
-	private int countMatches(int[] a, int[] b) {
+	private int countMatches(int[] playComb, int[] histComb) {
 		int counter = 0;
-		for (int x : a) {
-			for (int y : b) {
-				if (x == y) {
+		for (int playBall : playComb) {
+			for (int i = 1; i < histComb.length; i++) {
+				if (playBall == histComb[i]) {
 					++counter;
 				}
 			}
 		}
 		return counter;
-	}
-	
-	// debugging
-	public void displayHistCombinations() {
-		for (int[] combination : histCombinations) {
-			System.out.println(Arrays.toString(combination));
-		}
 	}
 	
 	public HistHandler getHistHandler() {
@@ -56,4 +49,12 @@ public class MatchingReporter {
 		mr.displayHistCombinations();
 		System.out.println("\n" + Arrays.toString(mr.getHistHandler().getNextLineOfHistBlock(shift)));
 	}
+	
+	// debugging
+	private void displayHistCombinations() {
+		for (int[] combination : histCombinations) {
+			System.out.println(Arrays.toString(combination));
+		}
+	}
+	
 }
