@@ -6,16 +6,14 @@ import fun.kolowert.serv.Serv;
 
 public class HitReporterSingle {
 	
-	public double[] makeHitReports(GameType gameType, int histDeep, int histShift, double[] frequencyReport) {
-		int[] bigSizes = { 2, 3, 4, 5, 6, 8, 10, 12 };
-		
-		double[] result = new double[bigSizes.length];
+	public double[] makeHitReports(GameType gameType, int histDeep, int histShift, double[] frequencyReport, int[] hitMask) {
+		double[] result = new double[hitMask.length];
 		
 		MatchingReporter matchingReporter = new MatchingReporter(gameType, histDeep, histShift);
 		int[] nextLineOfHistBlock = matchingReporter.getHistHandler().getNextLineOfHistBlock(histShift);
 		
-		for (int ind = 0; ind < bigSizes.length; ind++) {
-			int[] bigFrequencySet = makeBigFrequencySet(frequencyReport, bigSizes[ind]);
+		for (int ind = 0; ind < hitMask.length; ind++) {
+			int[] bigFrequencySet = makeBigFrequencySet(frequencyReport, hitMask[ind]);
 			int bigHitCount = countHits(bigFrequencySet, nextLineOfHistBlock);
 			result[ind] = bigHitCount + 0.01 * bigFrequencySet.length;
 		}
@@ -50,8 +48,8 @@ public class HitReporterSingle {
 			setSizes += setSize;
 			
 			double hitCoef = 1.0 * hitCount / setSize;
-			String bigHitReport = String.format(" %d/%d-%s ", hitCount, setSize, Serv.normDoubleX(hitCoef, 3));
-			sb.append(bigHitReport).append("\t");
+			String bigHitReport = String.format(" %d/%d-%s ", hitCount, setSize, Serv.normDoubleX(hitCoef, 4));
+			sb.append(bigHitReport).append("   ");
 			
 			// replace old data in hitReports by new isolated
 			hitReports[i] = hitCount + 0.01 * setSize;
