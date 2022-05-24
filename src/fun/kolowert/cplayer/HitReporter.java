@@ -4,7 +4,7 @@ import fun.kolowert.common.GameType;
 import fun.kolowert.common.MatchingReporter;
 import fun.kolowert.serv.Serv;
 
-public class HitReporterSingle {
+public class HitReporter {
 
 	public double[] makeHitReports(
 			GameType gameType, int histDeep, int histShift, double[] frequencyReport, int[] hitMask) {
@@ -51,7 +51,7 @@ public class HitReporterSingle {
 
 			double hitCoef = 1.0 * hitCount / setSize;
 			String bigHitReport = String.format(" %d/%d-%s ", hitCount, setSize, Serv.normDoubleX(hitCoef, 4));
-			sb.append(bigHitReport).append("   ");
+			sb.append(bigHitReport).append(" ");
 
 			// replace old data in hitReports by new isolated
 			hitReports[i] = hitCount + 0.01 * setSize;
