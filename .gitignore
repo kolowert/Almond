@@ -1,2 +1,6 @@
-memo
 /target/
+/bin
+.project
+.settings
+.classpath
+.gitignore

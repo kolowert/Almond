@@ -16,20 +16,17 @@ import fun.kolowert.serv.Timer;
  */
 public class BetaPlay {
 
-	private static final GameType GAME_TYPE = GameType.KENO;
+	private static final GameType GAME_TYPE = GameType.SUPER;
 	private static final int PLAY_SET = 4;
-	private static final int HIST_DEEP = 18;
-	private static final int HIST_SHIFT = 51;
-	private static final int HIST_SHIFTS = 10;
+	private static final int HIST_DEEP = 52;
+	private static final int HIST_SHIFT = 1;
+	private static final int HIST_SHIFTS = 3;
 	private static final int[] matchingMask = new int[] { 100, 100, 0, 0, 0 };
 
-	private static final int[] hitMaskPlain = { 2, 3, 4, 5, 6, 8, 10, 12, 18 };
-	//private static final int[] hitMaskIsolated = { 16, 32, 48, 64, 80 };
-	private static final int[] hitMaskIsolated = { 8, 16, 24, 32, 40, 48, 56, 64, 72, 80 };
-//	private static final int[] hitMaskIsolated = { 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30,
-//			32, 34, 36, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60, 62, 64, 66, 68, 70, 72, 74, 76, 78, 80 };
-	// private static final int[] hitMaskIsolated = { 4, 8, 12, 16, 20, 24, 28, 32,
-	// 36, 40, 44, 48, 52, 56, 60, 64, 68, 72, 76, 80 };
+	private static final int[] hitMaskPlain = { 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52 };
+	
+	private static final int[] hitMaskIsolated = { 13, 26, 39, 52 };
+	//private static final int[] hitMaskIsolated = { 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52 };
 
 	public static void main(String[] args) {
 		System.out.println("* BetaPlay * " + GAME_TYPE.name() + " * " + LocalDate.now());
@@ -40,7 +37,7 @@ public class BetaPlay {
 
 		boolean plainHits = false;
 		boolean isolatedHits = true;
-		boolean pureFreqReport = false;
+		boolean pureFreqReport = true;
 		multiPlay(plainHits, isolatedHits, pureFreqReport);
 
 		System.out.println("\nFINISH ~ " + timer.reportExtended());
@@ -62,10 +59,9 @@ public class BetaPlay {
 		double[] frequencyReport = freqReporter.getFrequencyReport();
 		freqReporter.displayFrequencyReports(HIST_SHIFT);
 
-		HitReporter hitReporter = new HitReporter();
-		double[] hitReports = hitReporter.makeHitReports(GAME_TYPE, HIST_DEEP, HIST_SHIFT, frequencyReport,
+		double[] hitReports = HitReporter.makeHitReports(GAME_TYPE, HIST_DEEP, HIST_SHIFT, frequencyReport,
 				hitMaskPlain);
-		String hitReportsReport = hitReporter.reportHitReports(hitReports);
+		String hitReportsReport = HitReporter.reportHitReports(hitReports);
 		System.out.println("hitReport S " + HIST_SHIFT + ": " + hitReportsReport + "\n");
 
 		System.out.println("poolPlay time - - -> " + timer.reportExtended() + "\n");
@@ -79,7 +75,6 @@ public class BetaPlay {
 		System.out.println(Combinator.reportCombinationsQuantity(PLAY_SET, GAME_TYPE.getGameSetSize()));
 
 		List<String> pureFreqReports = new ArrayList<>();
-		HitReporter hitReporter = new HitReporter();
 
 		int poolSizeSum = 0;
 		double[] plainHitAvgCoefSum = new double[hitMaskPlain.length];
@@ -101,9 +96,9 @@ public class BetaPlay {
 			}
 
 			if (plainHits) {
-				double[] hitReports = hitReporter.makeHitReports(GAME_TYPE, HIST_DEEP, indexHistShift,
+				double[] hitReports = HitReporter.makeHitReports(GAME_TYPE, HIST_DEEP, indexHistShift,
 						frequencyReport, hitMaskPlain);
-				String hitReportsReport = hitReporter.reportHitReports(hitReports);
+				String hitReportsReport = HitReporter.reportHitReports(hitReports);
 				System.out.println(
 						"hitReport plain " + Serv.normIntX(indexHistShift, 2, " ") + ":  " + hitReportsReport + "");
 
@@ -115,9 +110,9 @@ public class BetaPlay {
 			}
 
 			if (isolatedHits) {
-				double[] hitReports = hitReporter.makeHitReports(GAME_TYPE, HIST_DEEP, indexHistShift,
+				double[] hitReports = HitReporter.makeHitReports(GAME_TYPE, HIST_DEEP, indexHistShift,
 						frequencyReport, hitMaskIsolated);
-				String hitReportsReport = hitReporter.reportIsolatedHitReports(hitReports);
+				String hitReportsReport = HitReporter.reportIsolatedHitReports(hitReports);
 				System.out.println(
 						"hitReport isltd " + Serv.normIntX(indexHistShift, 2, " ") + ":  " + hitReportsReport + "");
 
@@ -182,7 +177,7 @@ public class BetaPlay {
 
 	private static void displayCoefReport(double[] coefReport) {
 		StringBuilder sb = new StringBuilder();
-		int step = hitMaskIsolated[0];
+		int step = hitMaskIsolated[0] - 1;
 		for (int i = coefReport.length - 1; i >= 0; i--) {
 			int n = (int) (100 * (0.005 + coefReport[i] - (int) coefReport[i]));
 			double coef = 0.0001 * step * (int) coefReport[i];

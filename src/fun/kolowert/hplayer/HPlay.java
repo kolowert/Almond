@@ -19,18 +19,15 @@ public class HPlay {
 	private static final int HIST_DEEP = 10;
 	private static final int HIST_SHIFT = 0;
 
-	private static final GameType GAME_TYPE = GameType.MAXI;
+	private static final GameType GAME_TYPE = GameType.SUPER;
 	private static final CoderType CODER_TYPE = CoderType.KOLO95;
 	
 	private static List<int[]> histCombinations = new HistHandler(GAME_TYPE, 2, HIST_SHIFT).getHistCombinations();
 	private static String preLastComb = Arrays.toString(histCombinations.get(1)).replaceAll("\\[|\\]|,", "");
 	private static String theLastComb = Arrays.toString(histCombinations.get(0)).replaceAll("\\[|\\]|,", "");
 	
-	private static final String[] SEEDS = { "Garage", "Opel Meriva", "Renault Grand Modus", "Ford Fusion +", 
-			"Skoda Roomster", "Skoda Yeti", "Na variata", "Navariata", "На вар'ята",
-			"A car worth up to $9 thousand, with: gasoline engine, manual gearbox, conditioner, 4 or 5 doors; "
-					+ "up to 150k km mileage, not damaged, no accidents, located in western Ukraine, not older "
-					+ "than 2008 year", "Crack the System", preLastComb, theLastComb };
+	private static final String[] SEEDS = { "Garage, New Car, New Computer, Motorcycle, Motor Scooter, Electric Bicycle", 
+			preLastComb, theLastComb };
 
 	private int combSetSize;
 	private int gameSetSize;
@@ -210,10 +207,16 @@ public class HPlay {
 				"The quick brown fox jumps over the lazy dog", 
 				"ThEqUiCkBrOwNfxJuMpSoVeRtHLaZyDGQIcKbWnFXjmPsvlAzYdg 0123456789!",
 				"!$0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz" };
+		
+		String[] dText = new String[] { "Garage", "Opel Meriva", "Renault Grand Modus", "Ford Fusion +", 
+				"Skoda Roomster", "Skoda Yeti", "Na variata", "Navariata", "На вар'ята",
+				"A car worth up to $9 thousand, with: gasoline engine, manual gearbox, conditioner, 4 or 5 doors; "
+						+ "up to 150k km mileage, not damaged, no accidents, located in western Ukraine, not older "
+						+ "than 2008 year", "Crack the System" };
 
 		System.out.println("\n----hasher");
 		System.out.println("type\t< combination >  [ analyzis ]  seeding text unit");
-		List<String> allText = prepareTextsList(aTexts, bTexts, cTexts);
+		List<String> allText = prepareTextsList(aTexts, bTexts, cTexts, dText);
 
 		List<MatchingReport> matchingReports = analyzeMatching(allText, false);
 

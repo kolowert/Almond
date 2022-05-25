@@ -6,7 +6,7 @@ import fun.kolowert.serv.Serv;
 
 public class HitReporter {
 
-	public double[] makeHitReports(
+	public static double[] makeHitReports(
 			GameType gameType, int histDeep, int histShift, double[] frequencyReport, int[] hitMask) {
 		
 		double[] result = new double[hitMask.length];
@@ -23,7 +23,7 @@ public class HitReporter {
 		return result;
 	}
 
-	public String reportHitReports(double[] hitReports) {
+	public static String reportHitReports(double[] hitReports) {
 		StringBuilder sb = new StringBuilder();
 		for (double r : hitReports) {
 			int hitCount = (int) r;
@@ -35,7 +35,7 @@ public class HitReporter {
 		return sb.toString();
 	}
 
-	public String reportIsolatedHitReports(double[] hitReports) {
+	public static String reportIsolatedHitReports(double[] hitReports) {
 		StringBuilder sb = new StringBuilder();
 		int hitCounts = 0;
 		int setSizes = 0;
@@ -59,7 +59,7 @@ public class HitReporter {
 		return sb.toString();
 	}
 
-	private int[] makeBigFrequencySet(double[] frequencyReport, int n) {
+	private static int[] makeBigFrequencySet(double[] frequencyReport, int n) {
 		int[] bigFrequencySet = new int[n];
 		int lastPozytion = frequencyReport.length - 1;
 		for (int i = lastPozytion, counter = 0; counter < n && i >= 0; i--, counter++) {
@@ -68,7 +68,7 @@ public class HitReporter {
 		return bigFrequencySet;
 	}
 
-	private int countHits(int[] a, int[] b) {
+	private static int countHits(int[] a, int[] b) {
 		int hitCount = 0;
 		for (int i = 0; i < a.length; i++) {
 			for (int j = 0; j < b.length; j++) {
