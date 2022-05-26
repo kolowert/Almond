@@ -74,20 +74,8 @@ public class BetaConcurentPlay {
 
 		}
 
-		doPostCycleReport();
-		
-		// debugging
-		System.out.println("results.size(): " + results.size());
-		System.out.println("\nIsolated hit reports");
-		for (ResultSet rs : results) {
-			System.out.println(Arrays.toString(rs.getIsolatedHitReport()));
-		}
-		System.out.println("\nFrequency reports");
-		for (ResultSet rs : results) {
-			System.out.println(Arrays.toString(rs.getFrequencyReport()));
-		}
-		
-		
+		doPostCycleReport(results);
+
 	}
 
 	private ResultSet doCoreCalc(int indexHistShift) {
@@ -95,7 +83,6 @@ public class BetaConcurentPlay {
 
 		PoolPlay poolPlay = new PoolPlay(GAME_TYPE, PLAY_SET, matchingMask);
 		MatchingReportPool pool = poolPlay.makeMatchingReportPool(HIST_DEEP, indexHistShift, false);
-		//poolSizeSum += pool.size();
 
 		FreqReporterOnPoolSimple freqReporter = new FreqReporterOnPoolSimple(GAME_TYPE, pool);
 		double[] frequencyReport = freqReporter.getFrequencyReport();
@@ -103,15 +90,31 @@ public class BetaConcurentPlay {
 		double[] hitReport = HitReporter.makeHitReports(GAME_TYPE, HIST_DEEP, indexHistShift, frequencyReport,
 				hitMaskIsolated);
 		// System.out.println(Arrays.toString(hitReport)); // debuggin
-		String hitReportReport = HitReporter.reportIsolatedHitReports(hitReport);
-		System.out.println("hitReport isltd " + Serv.normIntX(indexHistShift, 2, " ") + ":  " + hitReportReport + "");
+		/* String hitReportReport = */HitReporter.reportIsolatedHitReports(hitReport);
+		// System.out.println("hitReport isltd " + Serv.normIntX(indexHistShift, 2, " ")
+		// + ": " + hitReportReport + "");
 		// System.out.println(Arrays.toString(hitReport)); // debuggin
 
 		// TODO
-		return new ResultSet(indexHistShift, frequencyReport, hitReport);
+		return new ResultSet(indexHistShift, frequencyReport, hitReport, pool.size());
 	}
 
-	private void doPostCycleReport() {
+	private void doPostCycleReport(List<ResultSet> results) {
+		System.out.println("results.size(): " + results.size());
+		int poolSizeSum = 0;
+		System.out.println("\nFrequency reports");
+		for (ResultSet rs : results) {
+			System.out.println(Arrays.toString(rs.getFrequencyReport()));
+			poolSizeSum += rs.getPoolSize();
+		}
+		System.out.println("\navg pool size: " + ((int) 1.0 * poolSizeSum / results.size()));
+		System.out.println("\nIsolated hit reports");
+		for (ResultSet rs : results) {
+			System.out.println(Arrays.toString(rs.getIsolatedHitReport()));
+		}
+	}
+
+//	private void doPostCycleReportOld() {
 		// TODO
 //		if (isolatedHits && isolatedHitsCounter != 0) {
 //			StringBuilder head = new StringBuilder("\n                        --");
@@ -144,7 +147,7 @@ public class BetaConcurentPlay {
 //			}
 //			System.out.println(pureHead(GAME_TYPE));
 //		}
-	}
+//	}
 
 //	private static String pureHead(GameType gameType) {
 //		StringBuilder sb = new StringBuilder("-----");
