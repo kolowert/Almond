@@ -5,12 +5,12 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import fun.kolowert.common.GameType;
 import fun.kolowert.common.MatchingReportPool;
 import fun.kolowert.cplayer.Combinator;
-import fun.kolowert.cplayer.FreqReporterOnPoolSimple;
-import fun.kolowert.cplayer.HitReporter;
+import fun.kolowert.cplayer.FreqReporterOnPool;
 import fun.kolowert.cplayer.PoolPlay;
 import fun.kolowert.serv.Serv;
 import fun.kolowert.serv.Timer;
@@ -18,28 +18,36 @@ import fun.kolowert.serv.Timer;
 public class BetaConcurentPlay {
 
 	private static final GameType GAME_TYPE = GameType.SUPER;
-	private static final int PLAY_SET = 4;
-	private static final int HIST_DEEP = 52;
-	private static final int HIST_SHIFT = 1;
-	private static final int HIST_SHIFTS = 3;
-	private static final int[] matchingMask = new int[] { 100, 100, 0, 0, 0 };
+	private static final int PLAY_SET = 7;
+	private static final int HIST_DEEP = 45;
+	private static final int HIST_SHIFT = 4;
+	private static final int HIST_SHIFTS = 12;
+	private static final int[] matchingMask = new int[] { 100, 100, 0, 0, 0, 0, 0, 0 };
 
 	private static final int[] hitMaskIsolated = { 13, 26, 39, 52 };
+
+	private static final int WORKING_THREADS_AMOUNT = 3;
 
 	public static void main(String[] args) {
 		System.out.println("* BetaConcurentPlay * " + GAME_TYPE.name() + " * " + LocalDate.now());
 		BetaConcurentPlay mainPlayer = new BetaConcurentPlay();
+		ParamSet paramSet = new ParamSet(GAME_TYPE, PLAY_SET, HIST_DEEP, HIST_SHIFT, HIST_SHIFTS, matchingMask,
+				hitMaskIsolated);
 		Timer timer = new Timer();
 
-//		boolean display = false;
-//		mainPlayer.poolPlay(display);
+		boolean doit = false;
+		boolean display = true;
+		mainPlayer.poolPlay(doit, display);
 
-		mainPlayer.multiPlay();
+		mainPlayer.multiPlay(paramSet);
 
-		System.out.println("\nFINISH ~ " + timer.reportExtended());
+		System.out.print("\nFINISH ~ " + timer.reportExtended());
 	}
 
-	public void poolPlay(boolean display) {
+	public void poolPlay(boolean doit, boolean display) {
+		if (!doit)
+			return;
+
 		Timer timer = new Timer();
 
 		System.out.println("~ Concurent Single ~ " + " playSet:" + PLAY_SET + " histDeep:" + HIST_DEEP
@@ -51,123 +59,183 @@ public class BetaConcurentPlay {
 		MatchingReportPool pool = poolPlay.makeMatchingReportPool(HIST_DEEP, HIST_SHIFT, display);
 		System.out.println(">> " + pool.size() + " lines in frequency reports");
 
-		FreqReporterOnPoolSimple freqReporter = new FreqReporterOnPoolSimple(GAME_TYPE, pool);
+		FreqReporterOnPool freqReporter = new FreqReporterOnPool(GAME_TYPE, pool);
 		freqReporter.displayFrequencyReports(HIST_SHIFT);
 
 		System.out.println("poolPlay time - - -> " + timer.reportExtended() + "\n");
 	}
 	// ----------------------------------------------------------------------------------------------------------------
 
-	public void multiPlay() {
+	public void multiPlay(ParamSet paramSet) {
 		System.out.println("# Concurent Multy # " + " playSet:" + PLAY_SET + " histDeep:" + HIST_DEEP
 				+ " matchingMask:" + Arrays.toString(matchingMask) + " histLines:" + HIST_SHIFT + "/" + HIST_SHIFTS
-				+ "   " + LocalTime.now().toString().substring(0, 8));
+				+ " treads:" + WORKING_THREADS_AMOUNT + "   " + LocalTime.now().toString().substring(0, 8));
 		System.out.println(Combinator.reportCombinationsQuantity(PLAY_SET, GAME_TYPE.getGameSetSize()));
 
 		List<ResultSet> results = new ArrayList<>();
+		int pause = 125 * PLAY_SET * PLAY_SET;
 
 		// main cycle
 		for (int indexHistShift = HIST_SHIFT + HIST_SHIFTS - 1; indexHistShift >= HIST_SHIFT; indexHistShift--) {
 
-			ResultSet result = doCoreCalc(indexHistShift);
-			results.add(result);
+			int threadCounter = countWorkingThreds("alm");
+			//System.out.println(" ~" + threadCounter + "~ ");
 
+			// wait if too lot threads ...
+			while (threadCounter > WORKING_THREADS_AMOUNT - 1) {
+				int fixedResultSize = results.size();
+				System.out.print(".");
+				try {
+					Thread.sleep(pause);
+					if (fixedResultSize != results.size()) {
+						threadCounter -= results.size() - fixedResultSize;
+					}
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+
+			// do job
+			Thread thread = new Thread(new ResultMaker(paramSet, indexHistShift, results), "almond" + indexHistShift);
+			thread.start();
+
+			System.out.print(indexHistShift + ".");
+
+			// just small pause for smooth running
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		} // after main cycle
+
+		// wait to end all working threads
+		System.out.println();
+		int threadCounter = countWorkingThreds("alm");
+		while (threadCounter > 0) {
+			int fixedResultSize = results.size();
+			System.out.print(".");
+			try {
+				Thread.sleep(pause);
+				if (fixedResultSize != results.size()) {
+					threadCounter -= results.size() - fixedResultSize;
+				}
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 		}
 
 		doPostCycleReport(results);
 
 	}
 
-	private ResultSet doCoreCalc(int indexHistShift) {
-		// TODO
-
-		PoolPlay poolPlay = new PoolPlay(GAME_TYPE, PLAY_SET, matchingMask);
-		MatchingReportPool pool = poolPlay.makeMatchingReportPool(HIST_DEEP, indexHistShift, false);
-
-		FreqReporterOnPoolSimple freqReporter = new FreqReporterOnPoolSimple(GAME_TYPE, pool);
-		double[] frequencyReport = freqReporter.getFrequencyReport();
-
-		double[] hitReport = HitReporter.makeHitReports(GAME_TYPE, HIST_DEEP, indexHistShift, frequencyReport,
-				hitMaskIsolated);
-		// System.out.println(Arrays.toString(hitReport)); // debuggin
-		/* String hitReportReport = */HitReporter.reportIsolatedHitReports(hitReport);
-		// System.out.println("hitReport isltd " + Serv.normIntX(indexHistShift, 2, " ")
-		// + ": " + hitReportReport + "");
-		// System.out.println(Arrays.toString(hitReport)); // debuggin
-
-		// TODO
-		return new ResultSet(indexHistShift, frequencyReport, hitReport, pool.size());
+	private int countWorkingThreds(String namePrefix) {
+		Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
+		int threadCounter = 0;
+		for (Thread th : threadSet) {
+			if (th.getName().substring(0, 3).equals(namePrefix)) {
+				++threadCounter;
+				//System.out.print(th.getName() + " ");
+			}
+		}
+		return threadCounter;
 	}
 
 	private void doPostCycleReport(List<ResultSet> results) {
-		System.out.println("results.size(): " + results.size());
+		results.sort(null);
+		System.out.println("\nresults size = " + results.size());
 		int poolSizeSum = 0;
-		System.out.println("\nFrequency reports");
+		System.out.println("\nPure Frequency Reports");
 		for (ResultSet rs : results) {
-			System.out.println(Arrays.toString(rs.getFrequencyReport()));
+			System.out.println(
+					FreqReporterOnPool.reportPureFrequencyReports(rs.getFrequencyReport(), rs.getIndexHistShift()));
 			poolSizeSum += rs.getPoolSize();
 		}
-		System.out.println("\navg pool size: " + ((int) 1.0 * poolSizeSum / results.size()));
-		System.out.println("\nIsolated hit reports");
-		for (ResultSet rs : results) {
-			System.out.println(Arrays.toString(rs.getIsolatedHitReport()));
+		System.out.println(pureHead(GAME_TYPE, hitMaskIsolated));
+
+		if (!results.isEmpty()) {
+			System.out.println("\navg pool size: " + ((int) 1.0 * poolSizeSum / results.size()));
 		}
+
+		System.out.println("\nIsolated hit reports (hit.range)");
+		for (ResultSet rs : results) {
+			System.out.println(
+					Serv.normIntX(rs.getIndexHistShift(), 3, "0") + " " + Arrays.toString(rs.getIsolatedHitReport()));
+		}
+		displayHitReportsResume(results);
 	}
 
-//	private void doPostCycleReportOld() {
-		// TODO
-//		if (isolatedHits && isolatedHitsCounter != 0) {
-//			StringBuilder head = new StringBuilder("\n                        --");
-//			for (int i = 0; i < hitMaskIsolated.length; i++) {
-//				head.append(Serv.normIntX(hitMaskIsolated[i], 2, "0")).append("--       --");
-//			}
-//			System.out.println(head);
-//
-//			double[] coefReport = new double[isolatedHitAvgCoefSum.length];
-//			StringBuilder sb = new StringBuilder("IsolatedHit avgCoef >>  ");
-//			for (int i = 0; i < isolatedHitAvgCoefSum.length; i++) {
-//				double avgCoef = isolatedHitAvgCoefSum[i] / isolatedHitsCounter;
-//				sb.append(Serv.normDoubleX(avgCoef, 4)).append("       ");
-//				coefReport[i] = (int) (10000 * avgCoef) + 0.01 * hitMaskIsolated[i];
-//			}
-//			System.out.println(sb);
-//			Arrays.sort(coefReport);
-//			displayCoefReport(coefReport);
-//		}
-//
-//		if (counter != 0) {
-//			int avgFreqReportLines = (int) (1.0 * poolSizeSum / counter);
-//			System.out.println("\n" + avgFreqReportLines + "  avg lines in frequency reports");
-//		}
-//
-//		if (pureFreqReport) {
-//			System.out.println("\nPure Frequency Reports ---");
-//			for (String line : pureFreqReports) {
-//				System.out.println(line);
-//			}
-//			System.out.println(pureHead(GAME_TYPE));
-//		}
-//	}
+	private static void displayHitReportsResume(List<ResultSet> results) {
+		if (results == null || results.isEmpty()) {
+			System.out.println("can't displayHitReportsResume with bad argument");
+			return;
+		}
 
-//	private static String pureHead(GameType gameType) {
-//		StringBuilder sb = new StringBuilder("-----");
-//		for (int i = 1; i <= gameType.getGameSetSize(); i++) {
-//			sb.append(Serv.normIntX(i, 2, "0")).append("-");
-//		}
-//		return sb.toString();
-//	}
-//
-//	private static void displayCoefReport(double[] coefReport) {
-//		StringBuilder sb = new StringBuilder();
-//		int step = hitMaskIsolated[0] - 1;
-//		for (int i = coefReport.length - 1; i >= 0; i--) {
-//			int n = (int) (100 * (0.005 + coefReport[i] - (int) coefReport[i]));
-//			double coef = 0.0001 * step * (int) coefReport[i];
-//			sb.append("(").append(Serv.normIntX(n - step, 2, "0")).append("-").append(Serv.normIntX(n, 2, "0"))
-//					.append(") ").append(Serv.normDoubleX(coef, 2)).append("  ");
-//		}
-//
-//		System.out.println("sorted                  " + sb);
-//	}
+		int rows = hitMaskIsolated.length;
+		int[] hitsSums = new int[rows];
+		for (ResultSet rs : results) {
+			double[] hitLine = rs.getIsolatedHitReport();
+			for (int j = 0; j < rows; j++) {
+				hitsSums[j] += (int) hitLine[j];
+			}
+		}
+
+		StringBuilder head = new StringBuilder("\nhead  |  ");
+		for (int i = 0; i < hitMaskIsolated.length; i++) {
+			head.append(Serv.normIntX(hitMaskIsolated[i], 2, "0")).append("  |  |  ");
+		}
+		System.out.println(head.toString().substring(0, head.length() - 4));
+
+		StringBuilder hits = new StringBuilder("hits  | ");
+		for (int i = 0; i < hitMaskIsolated.length; i++) {
+			hits.append(Serv.normIntX(hitsSums[i], 3, " ")).append("  |  | ");
+		}
+		System.out.println(hits.toString().substring(0, hits.length() - 3));
+
+		StringBuilder coef = new StringBuilder("coef  |");
+		double[] coefValues = new double[hitMaskIsolated.length];
+		int lines = results.size();
+		for (int i = 0; i < hitMaskIsolated.length; i++) {
+			coefValues[i] = 1.0 * hitsSums[i] / lines + 0.00005;
+			coef.append(Serv.normDoubleX(coefValues[i], 4)).append("|  |");
+		}
+		System.out.println(coef.toString().substring(0, coef.length() - 3));
+
+		System.out.println("\nsorted hit reports resume");
+
+		// make sorted coefficient values..
+		double[] tranceCoef = new double[coefValues.length];
+		for (int i = 0; i < tranceCoef.length; i++) {
+			tranceCoef[i] = (int) (10_000 * coefValues[i]) + 0.01 * hitMaskIsolated[i];
+		}
+		// ..and display
+		Arrays.sort(tranceCoef);
+		//System.out.println(Arrays.toString(tranceCoef)); //TODO 
+		StringBuilder sb = new StringBuilder();
+		int step = hitMaskIsolated[0] - 1;
+		for (int i = tranceCoef.length - 1; i >= 0; i--) {
+			int n = (int) (0.005 + 100 * (tranceCoef[i] - (int) tranceCoef[i]));
+			double f = 0.0001 * tranceCoef[i];
+			sb.append("(").append(Serv.normIntX(n - step, 2, "0")).append("-").append(Serv.normIntX(n, 2, "0"))
+					.append(") ").append(Serv.normDoubleX(0.005 + f, 2)).append("  ");
+		}
+		System.out.println(sb);
+
+	}
+
+	private static String pureHead(GameType gameType, int[] mask) {
+		StringBuilder sb = new StringBuilder("--- |");
+		int maskIndex = 0;
+		for (int i = 1; i <= gameType.getGameSetSize(); i++) {
+			sb.append(Serv.normIntX(i, 2, "0"));
+			if (i == mask[maskIndex]) {
+				sb.append("|");
+				++maskIndex;
+			} else {
+				sb.append("-");	
+			}
+		}
+		return sb.toString();
+	}
 
 }

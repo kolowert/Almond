@@ -14,14 +14,14 @@ import fun.kolowert.serv.Serv;
  * @param GameType
  * @param matchingReportPool
  */
-public class FreqReporterOnPoolSimple {
+public class FreqReporterOnPool {
 	
 	private final GameType gameType;
 	private final MatchingReportPool matchingReportPool;
 	private double[] frequencyReport;
 	private boolean isReportMade = false;
 
-	public FreqReporterOnPoolSimple(GameType gameType, MatchingReportPool matchingReportPool) {
+	public FreqReporterOnPool(GameType gameType, MatchingReportPool matchingReportPool) {
 		this.gameType = gameType;
 		this.matchingReportPool = matchingReportPool;
 	}
@@ -77,9 +77,13 @@ public class FreqReporterOnPoolSimple {
 
 	public String reportPureFrequencyReports(int histShift) {
 		double[] freqReport = getFrequencyReport();
+		return reportPureFrequencyReports(freqReport, histShift);
+	}
+	
+	public static String reportPureFrequencyReports(double[] rawReport, int histShift) {
 		StringBuilder sb = new StringBuilder();
-		for (int i = freqReport.length - 1; i >= 0; i--) {
-			String ball = Serv.normIntX((int) (0.5 + 100.0 * (freqReport[i] - (int) freqReport[i])), 2, "0");
+		for (int i = rawReport.length - 1; i >= 0; i--) {
+			String ball = Serv.normIntX((int) (0.5 + 100.0 * (rawReport[i] - (int) rawReport[i])), 2, "0");
 			sb.append(ball).append(",");
 		}
 		String line = sb.toString();

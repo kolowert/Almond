@@ -11,17 +11,14 @@ import fun.kolowert.common.MatchingReportPool;
 import fun.kolowert.serv.Serv;
 import fun.kolowert.serv.Timer;
 
-/**
- * BetaPlay
- */
 public class BetaPlay {
 
 	private static final GameType GAME_TYPE = GameType.SUPER;
-	private static final int PLAY_SET = 4;
+	private static final int PLAY_SET = 5;
 	private static final int HIST_DEEP = 52;
 	private static final int HIST_SHIFT = 1;
-	private static final int HIST_SHIFTS = 3;
-	private static final int[] matchingMask = new int[] { 100, 100, 0, 0, 0 };
+	private static final int HIST_SHIFTS = 24;
+	private static final int[] matchingMask = new int[] { 100, 100, 0, 0, 0, 0 };
 
 	private static final int[] hitMaskPlain = { 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 48, 52 };
 	
@@ -32,8 +29,8 @@ public class BetaPlay {
 		System.out.println("* BetaPlay * " + GAME_TYPE.name() + " * " + LocalDate.now());
 		Timer timer = new Timer();
 
-		boolean display = false;
-		poolPlay(display);
+//		boolean display = false;
+//		poolPlay(display);
 
 		boolean plainHits = false;
 		boolean isolatedHits = true;
@@ -55,7 +52,7 @@ public class BetaPlay {
 		MatchingReportPool pool = poolPlay.makeMatchingReportPool(HIST_DEEP, HIST_SHIFT, display);
 		System.out.println(">> " + pool.size() + " lines in frequency reports");
 
-		FreqReporterOnPoolSimple freqReporter = new FreqReporterOnPoolSimple(GAME_TYPE, pool);
+		FreqReporterOnPool freqReporter = new FreqReporterOnPool(GAME_TYPE, pool);
 		double[] frequencyReport = freqReporter.getFrequencyReport();
 		freqReporter.displayFrequencyReports(HIST_SHIFT);
 
@@ -88,7 +85,7 @@ public class BetaPlay {
 			MatchingReportPool pool = poolPlay.makeMatchingReportPool(HIST_DEEP, indexHistShift, false);
 			poolSizeSum += pool.size();
 
-			FreqReporterOnPoolSimple freqReporter = new FreqReporterOnPoolSimple(GAME_TYPE, pool);
+			FreqReporterOnPool freqReporter = new FreqReporterOnPool(GAME_TYPE, pool);
 			double[] frequencyReport = freqReporter.getFrequencyReport();
 
 			if (pureFreqReport) {
