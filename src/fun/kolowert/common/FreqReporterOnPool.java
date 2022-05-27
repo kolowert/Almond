@@ -1,21 +1,19 @@
-package fun.kolowert.cplayer;
+package fun.kolowert.common;
 
 import java.util.Arrays;
 
-import fun.kolowert.common.GameType;
-import fun.kolowert.common.MatchingReportPool;
 import fun.kolowert.serv.Serv;
 
 /**
- * It should be created once for particular game type and Matching Reports Pool. It
- * counts appearance of balls in combinations from MatchingReport and makes
+ * It should be created once for particular game type and Matching Reports Pool.
+ * It counts appearance of balls in combinations from MatchingReport and makes
  * array of double where whole part is frequency and fractional part is ball.
  * 
  * @param GameType
  * @param matchingReportPool
  */
 public class FreqReporterOnPool {
-	
+
 	private final GameType gameType;
 	private final MatchingReportPool matchingReportPool;
 	private double[] frequencyReport;
@@ -41,7 +39,7 @@ public class FreqReporterOnPool {
 	private double[] prepareFrequencyReport() {
 		// Count Frequency of balls in matchingReports
 		int[] counter = new int[gameType.getGameSetSize() + 1];
-		
+
 		for (int[] playCombination : matchingReportPool.getPlayCombinations()) {
 			for (int ball : playCombination) {
 				++counter[ball];
@@ -79,7 +77,7 @@ public class FreqReporterOnPool {
 		double[] freqReport = getFrequencyReport();
 		return reportPureFrequencyReports(freqReport, histShift);
 	}
-	
+
 	public static String reportPureFrequencyReports(double[] rawReport, int histShift) {
 		StringBuilder sb = new StringBuilder();
 		for (int i = rawReport.length - 1; i >= 0; i--) {
@@ -89,4 +87,5 @@ public class FreqReporterOnPool {
 		String line = sb.toString();
 		return String.format("%s, %s", Serv.normIntX(histShift, 3, "0"), line.substring(0, line.length() - 4));
 	}
+	
 }

@@ -2,9 +2,9 @@ package fun.kolowert.bplayer;
 
 import java.util.List;
 
+import fun.kolowert.common.FreqReporterOnPool;
 import fun.kolowert.common.GameType;
 import fun.kolowert.common.MatchingReportPool;
-import fun.kolowert.cplayer.FreqReporterOnPool;
 import fun.kolowert.cplayer.HitReporter;
 import fun.kolowert.cplayer.PoolPlay;
 

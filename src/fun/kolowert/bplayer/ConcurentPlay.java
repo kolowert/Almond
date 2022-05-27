@@ -7,32 +7,32 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import fun.kolowert.common.FreqReporterOnPool;
 import fun.kolowert.common.GameType;
 import fun.kolowert.common.MatchingReportPool;
 import fun.kolowert.cplayer.Combinator;
-import fun.kolowert.cplayer.FreqReporterOnPool;
 import fun.kolowert.cplayer.PoolPlay;
 import fun.kolowert.serv.Serv;
 import fun.kolowert.serv.Timer;
 
-public class BetaConcurentPlay {
+public class ConcurentPlay {
 
-	private static final GameType GAME_TYPE = GameType.SUPER;
-	private static final int PLAY_SET = 7;
+	private static final GameType GAME_TYPE = GameType.MAXI;
+	private static final int PLAY_SET = 5;
 	private static final int HIST_DEEP = 45;
-	private static final int HIST_SHIFT = 4;
-	private static final int HIST_SHIFTS = 12;
-	private static final int[] matchingMask = new int[] { 100, 100, 0, 0, 0, 0, 0, 0 };
+	private static final int HIST_SHIFT = 3;
+	private static final int HIST_SHIFTS = 3;
+	private static final int[] matchingMask = new int[] { 100, 100, 0, 0, 0, 0 };
 
-	private static final int[] hitMaskIsolated = { 13, 26, 39, 52 };
+	private static final int[] hitRangeMask = { 5, 10, 15, 20, 25, 30, 35, 40, 45 };
 
 	private static final int WORKING_THREADS_AMOUNT = 3;
 
 	public static void main(String[] args) {
 		System.out.println("* BetaConcurentPlay * " + GAME_TYPE.name() + " * " + LocalDate.now());
-		BetaConcurentPlay mainPlayer = new BetaConcurentPlay();
+		ConcurentPlay mainPlayer = new ConcurentPlay();
 		ParamSet paramSet = new ParamSet(GAME_TYPE, PLAY_SET, HIST_DEEP, HIST_SHIFT, HIST_SHIFTS, matchingMask,
-				hitMaskIsolated);
+				hitRangeMask);
 		Timer timer = new Timer();
 
 		boolean doit = false;
@@ -79,7 +79,7 @@ public class BetaConcurentPlay {
 		for (int indexHistShift = HIST_SHIFT + HIST_SHIFTS - 1; indexHistShift >= HIST_SHIFT; indexHistShift--) {
 
 			int threadCounter = countWorkingThreds("alm");
-			//System.out.println(" ~" + threadCounter + "~ ");
+			// System.out.println(" ~" + threadCounter + "~ ");
 
 			// wait if too lot threads ...
 			while (threadCounter > WORKING_THREADS_AMOUNT - 1) {
@@ -135,27 +135,49 @@ public class BetaConcurentPlay {
 		for (Thread th : threadSet) {
 			if (th.getName().substring(0, 3).equals(namePrefix)) {
 				++threadCounter;
-				//System.out.print(th.getName() + " ");
+				// System.out.print(th.getName() + " ");
 			}
 		}
 		return threadCounter;
 	}
 
 	private void doPostCycleReport(List<ResultSet> results) {
+		if (!results.isEmpty()) {
+			int poolSizeSum = 0;
+			for (ResultSet rs : results) {
+				poolSizeSum += rs.getPoolSize();
+			}
+			System.out.println("\naverage pool size: " + ((int) 1.0 * poolSizeSum / results.size()));
+		}
+
 		results.sort(null);
 		System.out.println("\nresults size = " + results.size());
-		int poolSizeSum = 0;
 		System.out.println("\nPure Frequency Reports");
 		for (ResultSet rs : results) {
 			System.out.println(
 					FreqReporterOnPool.reportPureFrequencyReports(rs.getFrequencyReport(), rs.getIndexHistShift()));
-			poolSizeSum += rs.getPoolSize();
 		}
-		System.out.println(pureHead(GAME_TYPE, hitMaskIsolated));
+		System.out.println(pureHead(GAME_TYPE, hitRangeMask));
 
-		if (!results.isEmpty()) {
-			System.out.println("\navg pool size: " + ((int) 1.0 * poolSizeSum / results.size()));
+		System.out.println("\ntableOfHitsOnFrequency");
+		System.out.println(pureHead(GAME_TYPE, hitRangeMask));
+		List<int[]> hitPozysions = new ArrayList<>();
+		List<String> tableOfHitsOnFrequency = HitAnalizer.makeTableOfHitsOnFrequency(GAME_TYPE, results, hitPozysions,
+				true, false);
+		for (String hitLine : tableOfHitsOnFrequency) {
+			System.out.println(hitLine);
 		}
+		System.out.println(pureHead(GAME_TYPE, hitRangeMask));
+		
+		System.out.println("\nhitPozysions");
+		for (int[] hp : hitPozysions) {
+			System.out.println(Arrays.toString(hp));
+		}
+		
+		System.out.println("\nHits on Renges");
+		
+		
+		//---
 
 		System.out.println("\nIsolated hit reports (hit.range)");
 		for (ResultSet rs : results) {
@@ -171,7 +193,7 @@ public class BetaConcurentPlay {
 			return;
 		}
 
-		int rows = hitMaskIsolated.length;
+		int rows = hitRangeMask.length;
 		int[] hitsSums = new int[rows];
 		for (ResultSet rs : results) {
 			double[] hitLine = rs.getIsolatedHitReport();
@@ -181,21 +203,21 @@ public class BetaConcurentPlay {
 		}
 
 		StringBuilder head = new StringBuilder("\nhead  |  ");
-		for (int i = 0; i < hitMaskIsolated.length; i++) {
-			head.append(Serv.normIntX(hitMaskIsolated[i], 2, "0")).append("  |  |  ");
+		for (int i = 0; i < hitRangeMask.length; i++) {
+			head.append(Serv.normIntX(hitRangeMask[i], 2, "0")).append("  |  |  ");
 		}
 		System.out.println(head.toString().substring(0, head.length() - 4));
 
 		StringBuilder hits = new StringBuilder("hits  | ");
-		for (int i = 0; i < hitMaskIsolated.length; i++) {
+		for (int i = 0; i < hitRangeMask.length; i++) {
 			hits.append(Serv.normIntX(hitsSums[i], 3, " ")).append("  |  | ");
 		}
 		System.out.println(hits.toString().substring(0, hits.length() - 3));
 
 		StringBuilder coef = new StringBuilder("coef  |");
-		double[] coefValues = new double[hitMaskIsolated.length];
+		double[] coefValues = new double[hitRangeMask.length];
 		int lines = results.size();
-		for (int i = 0; i < hitMaskIsolated.length; i++) {
+		for (int i = 0; i < hitRangeMask.length; i++) {
 			coefValues[i] = 1.0 * hitsSums[i] / lines + 0.00005;
 			coef.append(Serv.normDoubleX(coefValues[i], 4)).append("|  |");
 		}
@@ -206,13 +228,13 @@ public class BetaConcurentPlay {
 		// make sorted coefficient values..
 		double[] tranceCoef = new double[coefValues.length];
 		for (int i = 0; i < tranceCoef.length; i++) {
-			tranceCoef[i] = (int) (10_000 * coefValues[i]) + 0.01 * hitMaskIsolated[i];
+			tranceCoef[i] = (int) (10_000 * coefValues[i]) + 0.01 * hitRangeMask[i];
 		}
 		// ..and display
 		Arrays.sort(tranceCoef);
-		//System.out.println(Arrays.toString(tranceCoef)); //TODO 
+		// System.out.println(Arrays.toString(tranceCoef)); //TODO
 		StringBuilder sb = new StringBuilder();
-		int step = hitMaskIsolated[0] - 1;
+		int step = hitRangeMask[0] - 1;
 		for (int i = tranceCoef.length - 1; i >= 0; i--) {
 			int n = (int) (0.005 + 100 * (tranceCoef[i] - (int) tranceCoef[i]));
 			double f = 0.0001 * tranceCoef[i];
@@ -232,7 +254,7 @@ public class BetaConcurentPlay {
 				sb.append("|");
 				++maskIndex;
 			} else {
-				sb.append("-");	
+				sb.append("-");
 			}
 		}
 		return sb.toString();

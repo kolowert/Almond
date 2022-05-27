@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import fun.kolowert.common.FreqReporterOnPool;
 import fun.kolowert.common.GameType;
 import fun.kolowert.common.MatchingReportPool;
 import fun.kolowert.serv.Serv;
