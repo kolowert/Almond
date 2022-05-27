@@ -4,7 +4,7 @@ public enum GameType {
 	
 	MAXI(5, 5, 45, "maxi.txt"),
 	SUPER(6, 6, 52, "super.txt"),
-	KENO(10, 10, 80, "keno.txt");
+	KENO(10, 20, 80, "keno.txt");
 	
 	private final int combSetSize;
 	private final int playSetSize;

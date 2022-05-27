@@ -17,14 +17,15 @@ import fun.kolowert.serv.Timer;
 
 public class ConcurentPlay {
 
-	private static final GameType GAME_TYPE = GameType.MAXI;
+	private static final GameType GAME_TYPE = GameType.KENO;
 	private static final int PLAY_SET = 5;
-	private static final int HIST_DEEP = 45;
-	private static final int HIST_SHIFT = 3;
-	private static final int HIST_SHIFTS = 3;
+	private static final int HIST_DEEP = 16;
+	private static final int HIST_SHIFT = 0;
+	private static final int HIST_SHIFTS = 32;
 	private static final int[] matchingMask = new int[] { 100, 100, 0, 0, 0, 0 };
 
-	private static final int[] hitRangeMask = { 5, 10, 15, 20, 25, 30, 35, 40, 45 };
+	private static final int[] hitRangeMask = { 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36,
+			40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60, 62, 64, 66, 68, 70, 72, 74, 76, 78, 80 };
 
 	private static final int WORKING_THREADS_AMOUNT = 3;
 
@@ -153,6 +154,7 @@ public class ConcurentPlay {
 		results.sort(null);
 		System.out.println("\nresults size = " + results.size());
 		System.out.println("\nPure Frequency Reports");
+		System.out.println(pureHead(GAME_TYPE, hitRangeMask));
 		for (ResultSet rs : results) {
 			System.out.println(
 					FreqReporterOnPool.reportPureFrequencyReports(rs.getFrequencyReport(), rs.getIndexHistShift()));
@@ -161,48 +163,71 @@ public class ConcurentPlay {
 
 		System.out.println("\ntableOfHitsOnFrequency");
 		System.out.println(pureHead(GAME_TYPE, hitRangeMask));
-		List<int[]> hitPozysions = new ArrayList<>();
-		List<String> tableOfHitsOnFrequency = HitAnalizer.makeTableOfHitsOnFrequency(GAME_TYPE, results, hitPozysions,
-				true, false);
+		List<int[]> hitPozysionsTab = new ArrayList<>();
+		List<String> tableOfHitsOnFrequency = HitAnalizer.makeTableOfHitsOnFrequency(GAME_TYPE, results,
+				hitPozysionsTab, true, false);
+
 		for (String hitLine : tableOfHitsOnFrequency) {
 			System.out.println(hitLine);
 		}
 		System.out.println(pureHead(GAME_TYPE, hitRangeMask));
-		
-		System.out.println("\nhitPozysions");
-		for (int[] hp : hitPozysions) {
-			System.out.println(Arrays.toString(hp));
-		}
-		
-		System.out.println("\nHits on Renges");
-		
-		
-		//---
 
-		System.out.println("\nIsolated hit reports (hit.range)");
-		for (ResultSet rs : results) {
-			System.out.println(
-					Serv.normIntX(rs.getIndexHistShift(), 3, "0") + " " + Arrays.toString(rs.getIsolatedHitReport()));
-		}
-		displayHitReportsResume(results);
+		List<int[]> hitsOnRenges = calculateHitsOnRenges(hitPozysionsTab, hitRangeMask);
+
+		displayTab(hitsOnRenges, "\nHits on Renges");
+
+		displayHitsOnRangesResume(hitsOnRenges, hitRangeMask);
+
 	}
 
-	private static void displayHitReportsResume(List<ResultSet> results) {
-		if (results == null || results.isEmpty()) {
-			System.out.println("can't displayHitReportsResume with bad argument");
-			return;
-		}
+	private static List<int[]> calculateHitsOnRenges(List<int[]> hitPozysionsTab, int[] mask) {
+		List<int[]> result = new ArrayList<>();
 
+		for (int[] hitPozysionsLine : hitPozysionsTab) {
+			int[] hits = new int[mask.length + 1];
+			hits[0] = hitPozysionsLine[0];
+			for (int maskIndex = 0; maskIndex < mask.length; maskIndex++) {
+				for (int i = 1; i < hitPozysionsLine.length; i++) {
+					if (hitPozysionsLine[i] > 0 && hitPozysionsLine[i] <= mask[maskIndex]) {
+						++hits[maskIndex + 1];
+					}
+				}
+			}
+			int hitSum = 0;
+			for (int i = 2; i < hits.length; i++) {
+				hitSum += hits[i - 1];
+				hits[i] = hits[i] - hitSum;
+			}
+			result.add(hits);
+		}
+		return result;
+	}
+
+	private static void displayTab(List<int[]> tab, String title) {
+		StringBuilder result = new StringBuilder();
+		result.append(title).append(System.lineSeparator());
+		for (int[] line : tab) {
+			StringBuilder h = new StringBuilder(Serv.normIntX(line[0], 3, "0") + "   ");
+			for (int i = 1; i < line.length; i++) {
+				h.append(Serv.normIntX(line[i], 2, " ")).append("  ");
+			}
+			result.append(h).append(System.lineSeparator());
+		}
+		System.out.println(result);
+	}
+
+	private static void displayHitsOnRangesResume(List<int[]> hitsOnRenges, int[] mask) {
 		int rows = hitRangeMask.length;
 		int[] hitsSums = new int[rows];
-		for (ResultSet rs : results) {
-			double[] hitLine = rs.getIsolatedHitReport();
+		for (int[] line : hitsOnRenges) {
 			for (int j = 0; j < rows; j++) {
-				hitsSums[j] += (int) hitLine[j];
+				hitsSums[j] += line[j + 1];
 			}
 		}
 
-		StringBuilder head = new StringBuilder("\nhead  |  ");
+		System.out.println("\nHits On Ranges Resume");
+
+		StringBuilder head = new StringBuilder("head  |  ");
 		for (int i = 0; i < hitRangeMask.length; i++) {
 			head.append(Serv.normIntX(hitRangeMask[i], 2, "0")).append("  |  |  ");
 		}
@@ -216,14 +241,14 @@ public class ConcurentPlay {
 
 		StringBuilder coef = new StringBuilder("coef  |");
 		double[] coefValues = new double[hitRangeMask.length];
-		int lines = results.size();
+		int lines = hitsOnRenges.size();
 		for (int i = 0; i < hitRangeMask.length; i++) {
 			coefValues[i] = 1.0 * hitsSums[i] / lines + 0.00005;
 			coef.append(Serv.normDoubleX(coefValues[i], 4)).append("|  |");
 		}
 		System.out.println(coef.toString().substring(0, coef.length() - 3));
 
-		System.out.println("\nsorted hit reports resume");
+		System.out.println("\nFinal resume");
 
 		// make sorted coefficient values..
 		double[] tranceCoef = new double[coefValues.length];
@@ -232,7 +257,6 @@ public class ConcurentPlay {
 		}
 		// ..and display
 		Arrays.sort(tranceCoef);
-		// System.out.println(Arrays.toString(tranceCoef)); //TODO
 		StringBuilder sb = new StringBuilder();
 		int step = hitRangeMask[0] - 1;
 		for (int i = tranceCoef.length - 1; i >= 0; i--) {
@@ -242,7 +266,6 @@ public class ConcurentPlay {
 					.append(") ").append(Serv.normDoubleX(0.005 + f, 2)).append("  ");
 		}
 		System.out.println(sb);
-
 	}
 
 	private static String pureHead(GameType gameType, int[] mask) {

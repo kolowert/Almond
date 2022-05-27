@@ -15,18 +15,27 @@ public class HitAnalizer {
 	 * @param results
 	 * @param letMarkLines
 	 * @param letBallLines
-	 * @param hitPozysions - it is transient parameter
+	 * @param hitPozysionsTab - it is transient parameter
 	 * @return Table Of Hits On Frequency
 	 */
 	public static List<String> makeTableOfHitsOnFrequency(GameType gameType, List<ResultSet> results,
-			List<int[]> hitPozysions, boolean letMarkLines, boolean letBallLines) {
+			List<int[]> hitPozysionsTab, boolean letMarkLines, boolean letBallLines) {
 
 		int baseHistShift = findBaseHistShift(results);
 
 		// prepare history & ball lines
 		int histDeep = results.size();
-		HistHandler histHandler = new HistHandler(gameType, histDeep + 1, baseHistShift);
+		int tip = baseHistShift > 0 ? 1 : 0;
+		HistHandler histHandler = new HistHandler(gameType, histDeep + tip, baseHistShift - tip);
 		List<int[]> histCombinations = histHandler.getHistCombinations();
+		
+		if (tip == 0) {
+			int len = histCombinations.get(0).length;
+			int[] addLine = new int[len];
+			addLine[0] = histCombinations.get(0)[0] + 1;
+			histCombinations.add(0, addLine);
+		}
+		
 		List<int[]> ballLines = prepareBallLines(results, histCombinations);
 
 		// debugging
@@ -65,7 +74,7 @@ public class HitAnalizer {
 				ballLine.append(Serv.normIntX(ball, 2, "0")).append(" ");
 			}
 
-			hitPozysions.add(hitPozs);
+			hitPozysionsTab.add(hitPozs);
 
 			if (letMarkLines) {
 				markTable.add(markLine.toString());
@@ -86,7 +95,7 @@ public class HitAnalizer {
 			double[] rawReport = results.get(i).getFrequencyReport();
 			int[] balls = makeBallsLineOnFrequencyReport(indexHistShift, rawReport);
 			// put histLineIndex to balls[]
-			balls[1] = histCombinations.get(i + 1)[0];
+			balls[1] = histCombinations.get(histCombinations.size() - 1 - i)[0];
 			ballLines.add(balls);
 		}
 		return ballLines;
@@ -131,7 +140,7 @@ public class HitAnalizer {
 				min = rs.getIndexHistShift();
 			}
 		}
-		return min > 0 ? min - 1 : min;
+		return min;
 	}
 
 }

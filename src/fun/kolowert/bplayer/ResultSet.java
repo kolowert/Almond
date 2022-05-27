@@ -4,7 +4,7 @@ public class ResultSet implements Comparable<ResultSet> {
 
 	private final int indexHistShift;
 	private final double[] frequencyReport;
-	private final double[] isolatedHitReport;
+	private final double[] isolatedHitReport; // TODO  rid of it
 	private final int poolSize;
 	private final long timePoint;
 
