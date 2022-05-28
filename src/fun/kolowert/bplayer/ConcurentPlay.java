@@ -17,17 +17,16 @@ import fun.kolowert.serv.Timer;
 
 public class ConcurentPlay {
 
-	private static final GameType GAME_TYPE = GameType.KENO;
+	private static final GameType GAME_TYPE = GameType.MAXI;
 	private static final int PLAY_SET = 5;
-	private static final int HIST_DEEP = 16;
-	private static final int HIST_SHIFT = 0;
-	private static final int HIST_SHIFTS = 32;
+	private static final int HIST_DEEP = 45;
+	private static final int HIST_SHIFT = 1;
+	private static final int HIST_SHIFTS = 12;
 	private static final int[] matchingMask = new int[] { 100, 100, 0, 0, 0, 0 };
 
-	private static final int[] hitRangeMask = { 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36,
-			40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60, 62, 64, 66, 68, 70, 72, 74, 76, 78, 80 };
+	private static final int[] hitRangeMask = { 9, 18, 27, 36, 45 };
 
-	private static final int WORKING_THREADS_AMOUNT = 3;
+	private static final int WORKING_THREADS_AMOUNT = 4;
 
 	public static void main(String[] args) {
 		System.out.println("* BetaConcurentPlay * " + GAME_TYPE.name() + " * " + LocalDate.now());

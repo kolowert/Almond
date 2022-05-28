@@ -19,7 +19,7 @@ public class HPlay {
 	private static final int HIST_DEEP = 10;
 	private static final int HIST_SHIFT = 0;
 
-	private static final GameType GAME_TYPE = GameType.SUPER;
+	private static final GameType GAME_TYPE = GameType.MAXI;
 	private static final CoderType CODER_TYPE = CoderType.KOLO95;
 	
 	private static List<int[]> histCombinations = new HistHandler(GAME_TYPE, 2, HIST_SHIFT).getHistCombinations();
@@ -56,7 +56,7 @@ public class HPlay {
 
 		hPlay.playBook(false);
 
-		hPlay.buncher(false);
+		hPlay.buncher(true);
 
 		System.out.println("\n~~~ FINISH ~~~");
 		System.out.println(timer.reportExtended());
