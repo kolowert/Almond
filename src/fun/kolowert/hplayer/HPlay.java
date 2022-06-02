@@ -11,22 +11,23 @@ import fun.kolowert.common.GameType;
 import fun.kolowert.common.MatchingReporter;
 import fun.kolowert.common.HistHandler;
 import fun.kolowert.common.MatchingReport;
+import fun.kolowert.serv.Sounder;
 import fun.kolowert.serv.Timer;
 
 public class HPlay {
 
 	private static final int COMB_SIZE = 8;
-	private static final int HIST_DEEP = 10;
+	private static final int HIST_DEEP = 100;
 	private static final int HIST_SHIFT = 0;
 
 	private static final GameType GAME_TYPE = GameType.MAXI;
-	private static final CoderType CODER_TYPE = CoderType.KOLO95;
+	private static final CoderType CODER_TYPE = CoderType.KOLO64;
 	
 	private static List<int[]> histCombinations = new HistHandler(GAME_TYPE, 2, HIST_SHIFT).getHistCombinations();
 	private static String preLastComb = Arrays.toString(histCombinations.get(1)).replaceAll("\\[|\\]|,", "");
 	private static String theLastComb = Arrays.toString(histCombinations.get(0)).replaceAll("\\[|\\]|,", "");
 	
-	private static final String[] SEEDS = { "Garage, New Car, New Computer, Motorcycle, Motor Scooter, Electric Bicycle", 
+	private static final String[] SEEDS = { "Get to the United States of America.", "Garage, Implants, New Car, New Computer, Motorcycle, Motor Scooter, Electric Bicycle", 
 			preLastComb, theLastComb };
 
 	private int combSetSize;
@@ -60,6 +61,7 @@ public class HPlay {
 
 		System.out.println("\n~~~ FINISH ~~~");
 		System.out.println(timer.reportExtended());
+		Sounder.beep();
 	}
 
 	public void play(boolean doit) {

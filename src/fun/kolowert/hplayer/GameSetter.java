@@ -36,13 +36,13 @@ public class GameSetter {
 	 */
 	public int[] makeGameSet(int balls, int ballSet, String textUnit) {
 
-		int deep = 4;
+		int deep = 3;
 		int repetition = 2 * ballSet;
 
 		int[] preCombination = new int[balls];
 		int[] combination = new int[balls];
 
-		String a = coder.makeLettered(textUnit, deep * balls);
+		String a = coder.makeLettered(textUnit, deep + deep * balls);
 
 		for (int i = 0; i < balls; i++) {
 			for (int j = 0; j < deep; j++) {
