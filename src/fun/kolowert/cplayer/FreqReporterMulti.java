@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import fun.kolowert.common.Combinator;
 import fun.kolowert.common.GameType;
 import fun.kolowert.common.MatchingReport;
 

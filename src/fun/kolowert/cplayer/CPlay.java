@@ -3,6 +3,7 @@ package fun.kolowert.cplayer;
 import java.util.ArrayList;
 import java.util.List;
 
+import fun.kolowert.common.Combinator;
 import fun.kolowert.common.GameType;
 import fun.kolowert.common.MatchingReporter;
 import fun.kolowert.common.MatchingReport;

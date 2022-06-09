@@ -2,6 +2,7 @@ package fun.kolowert.cplayer;
 
 import java.util.List;
 
+import fun.kolowert.common.Combinator;
 import fun.kolowert.common.GameType;
 import fun.kolowert.common.HistHandler;
 import fun.kolowert.common.MatchingCalculator;

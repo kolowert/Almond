@@ -1,4 +1,4 @@
-package fun.kolowert.cplayer;
+package fun.kolowert.common;
 
 import java.util.Arrays;
 
@@ -53,6 +53,7 @@ public class Combinator {
 		return result;
 	}
 
+	// TODO it should be improved
 	public int[] makeNext() {
 		if (isFirst) {
 			isFirst = false;

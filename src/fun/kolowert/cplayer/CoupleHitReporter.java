@@ -1,5 +1,6 @@
 package fun.kolowert.cplayer;
 
+import fun.kolowert.common.Combinator;
 import fun.kolowert.common.GameType;
 import fun.kolowert.common.MatchingReporter;
 import fun.kolowert.serv.Serv;

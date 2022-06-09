@@ -7,10 +7,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
+import fun.kolowert.common.Combinator;
 import fun.kolowert.common.FreqReporterOnPool;
 import fun.kolowert.common.GameType;
 import fun.kolowert.common.MatchingReportPool;
-import fun.kolowert.cplayer.Combinator;
 import fun.kolowert.cplayer.PoolPlay;
 import fun.kolowert.serv.Serv;
 import fun.kolowert.serv.Sounder;
@@ -19,14 +19,17 @@ import fun.kolowert.serv.Timer;
 public class ConcurentPlay {
 
 	private static final GameType GAME_TYPE = GameType.KENO;
-	private static final int PLAY_SET = 4;
-	private static final int HIST_DEEP = 16;
-	private static final int HIST_SHIFT = 4;
-	private static final int HIST_SHIFTS = 32;
-	private static final int[] matchingMask = new int[] { 100, 10, 0, 0, 0 };
+	private static final int PLAY_SET = 5;
+	private static final int HIST_DEEP = 40;
+	private static final int HIST_SHIFT = 0;
+	private static final int HIST_SHIFTS = 24;
+	private static final int[] matchingMask = new int[] { 100, 100, 8, 0, 0, 0 };
 
-	private static final int[] hitRangeMask = { 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36,
-			38, 40, 42, 44, 46, 48, 50, 52, 54, 56, 58, 60, 62, 64, 66, 68, 70, 72, 74, 76, 78, 80 };
+	private static final int[] hitRangeMask = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 
+			11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
+			31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
+			51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70,
+			71, 72, 73, 74, 75, 76, 77, 78, 79, 80 };
 
 	private static final int WORKING_THREADS_AMOUNT = 3;
 
@@ -85,7 +88,7 @@ public class ConcurentPlay {
 			// System.out.println(" ~" + threadCounter + "~ ");
 
 			// wait if too lot threads ...
-			while (threadCounter > WORKING_THREADS_AMOUNT - 1) {
+			while (threadCounter >= WORKING_THREADS_AMOUNT) {
 				int fixedResultSize = results.size();
 				System.out.print(".");
 				try {
@@ -103,7 +106,7 @@ public class ConcurentPlay {
 					"almond" + indexHistShift);
 			resultMakerThread.start();
 
-			System.out.print(indexHistShift + ".");
+			System.out.print(indexHistShift + ":");
 
 			// just small pause for smooth running
 			try {
