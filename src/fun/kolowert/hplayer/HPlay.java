@@ -17,7 +17,7 @@ import fun.kolowert.serv.Timer;
 public class HPlay {
 
 	private static final int COMB_SIZE = 8;
-	private static final int HIST_DEEP = 1;
+	private static final int HIST_DEEP = 100;
 	private static final int HIST_SHIFT = 0;
 
 	private static final GameType GAME_TYPE = GameType.SUPER;

@@ -27,7 +27,7 @@ public class MatchingReportPool {
 	public void addRecord(int[] playCombination,int[] matching, String textUnit) {
 		playCombinations.add(playCombination);
 		matchings.add(matching);
-		scores.add(countScore(matching));
+		scores.add(ScoreCouner.countScore(gameType, matching));
 		textUnits.add(textUnit);
 	}
 	
@@ -35,7 +35,7 @@ public class MatchingReportPool {
 		playCombinations.add(playCombination);
 		int[] matching = MatchingCalculator.countMatches(playCombination, histCombinations);
 		matchings.add(matching);
-		scores.add(countScore(matching));
+		scores.add(ScoreCouner.countScore(gameType, matching));
 		textUnits.add(textUnit);
 	}
 	
@@ -96,30 +96,5 @@ public class MatchingReportPool {
 	public int size() {
 		return playCombinations.size();
 	}
-	
-	private int countScore(int[] matching) {
-		int result = 0;
-		switch (gameType) {
-		case SUPER:
-			result = scoreCounter(new int[] { 0, 1, 16, 41, 1_100, 75_000, 1_000_000 }, matching);
-			break;
-		case MAXI:
-			result = scoreCounter(new int[] { 0, 1, 12, 150, 10_000, 400_000 }, matching);
-			break;
-		case KENO:
-			result = scoreCounter(new int[] { 0, 1, 8, 16, 32, 80, 200, 600, 4000, 40_000, 800_000 }, matching);
-			break;
-		}
-		return result;
-	}
-	
-	// Servant for countScore(..)
-	private int scoreCounter(int[] mask, int[] matching) {
-		int result = 0;
-		for (int i = 1; i < matching.length && i < mask.length; i++) {
-			result += matching[i] * mask[i];
-		}
-		return result;
-	}
-	
+		
 }

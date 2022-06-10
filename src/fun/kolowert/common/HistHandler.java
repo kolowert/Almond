@@ -61,7 +61,7 @@ public class HistHandler {
 
 	// debugging
 	public static void main(String[] args) {
-		HistHandler hh = new HistHandler(GameType.MAXI, 10, 0);
+		HistHandler hh = new HistHandler(GameType.MAXI, 5, 1);
 
 		List<int[]> hcs = hh.getHistCombinations();
 		for (int[] hc : hcs) {
