@@ -13,11 +13,11 @@ import fun.kolowert.serv.Timer;
 
 public class APlay {
 
-	private static final GameType GAME_TYPE = GameType.MAXI;
+	private static final GameType GAME_TYPE = GameType.KENO;
 	private static final int PLAY_SET = 5;
-	private static final int HIST_DEEP = 100;
+	private static final int HIST_DEEP = 16;
 	private static final int HIST_SHIFT = 3;
-	private static final int REPORT_LIMIT = 100;
+	private static final int REPORT_LIMIT = 100_000;
 
 	public static void main(String[] args) {
 		System.out.println("* Alpha Play * " + GAME_TYPE.name() + " * " + LocalDate.now());
@@ -37,21 +37,58 @@ public class APlay {
 
 		HistHandler histHandler = new HistHandler(GAME_TYPE, HIST_DEEP, HIST_SHIFT);
 		List<int[]> histBox = histHandler.getHistCombinations();
-		int[] nextLine = new int[GAME_TYPE.getPlaySetSize()];
-		Reporter reporter = new Reporter(GameType.MAXI, histBox, nextLine, REPORT_LIMIT);
+		int[] nextLine = histHandler.getNextLineOfHistBlock(HIST_SHIFT);
+		Reporter reporter = new Reporter(GAME_TYPE, histBox, nextLine, REPORT_LIMIT);
 
-		Combinator combinator = new Combinator(GAME_TYPE.getCombSetSize(), GAME_TYPE.getGameSetSize());
+		Combinator combinator = new Combinator(PLAY_SET, GAME_TYPE.getGameSetSize());
 
 		while (!combinator.isFinished()) {
 			int[] combination = combinator.makeNext();
 			reporter.processCombination(combination);
 		}
-
-		String playCombinationsReport = reporter.reportPlayCombinations();
-		System.out.println(playCombinationsReport);
+		
+//		System.out.println("PlayCombinationsReport");
+//		String playCombinationsReport = reporter.reportPlayCombinations();
+//		System.out.println(playCombinationsReport);
+		
+		double[] frequencyes = reporter.countFrequencyes();
+		System.out.println("\nFrequencyes Report on base line id:" + histBox.get(0)[0]);
+		System.out.println(Reporter.reportFrequencyes(frequencyes));
+		
+		System.out.println("Ball sequence");
+		int[] ballSequence = Reporter.extractBallSequence(frequencyes);
+		System.out.println(Arrays.toString(ballSequence));
+		
+		System.out.println("Hits in ball sequence");
+		int[] hits = countBallHitsInBallSequence(ballSequence, nextLine);
+		System.out.println(Arrays.toString(hits));
+		
+		System.out.println("\n---------");
+		System.out.println("base Line: " + Arrays.toString(histBox.get(0)));
 		System.out.println("next Line: " + Arrays.toString(nextLine));
 	}
-
+	
+	private int[] countBallHitsInBallSequence(int[] ballSequence, int[] nextLine) {
+		int length = ballSequence.length;
+		int[] result = new int[length];
+		
+		for (int i = 0; i < length; i++) {
+			if (isHit(ballSequence[i], nextLine)) {
+				++result[i];
+			}
+		}
+		return result;
+	}
+	
+	private boolean isHit(int ball, int[] nextLine) {
+		for (int n : nextLine) {
+			if (ball == n) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
 	public static void test1() {
 		List<int[]> histBox = new ArrayList<>();
 		histBox.add(new int[] { 1, 9, 30, 40, 45 });

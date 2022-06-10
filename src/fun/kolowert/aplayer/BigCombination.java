@@ -49,7 +49,11 @@ public class BigCombination implements Comparable<BigCombination> {
 		BigCombination other = (BigCombination) obj;
 		return score == other.score;
 	}
-
+	
+	public int[] getCombination() {
+		return combination;
+	}
+	
 	public int getCombinationLength() {
 		return combination.length;
 	}

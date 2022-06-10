@@ -1,6 +1,7 @@
 package fun.kolowert.aplayer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -57,9 +58,44 @@ public class Reporter {
 	 * It returns quantity of ball-popping in format DD.dd where DD is quantity and
 	 * .dd is ball-id divided by 100.0
 	 */
-	public double[] reportFrequency() {
-		// TODO
-		return new double[] { 0.0, 0.0, 0.0 };
+	public double[] countFrequencyes() {
+		// Count Frequency of balls
+		int[] counter = new int[gameType.getGameSetSize() + 1];
+
+		for (BigCombination bigCombination : bigCombinations) {
+			int[] combination = bigCombination.getCombination();
+			for (int ball : combination) {
+				++counter[ball];
+			}
+		}
+		// prepare report
+		double[] freqReport = new double[gameType.getGameSetSize() + 1];
+		for (int i = 1; i < counter.length; i++) {
+			freqReport[i] = counter[i] + 0.01 * i;
+		}
+		Arrays.sort(freqReport);
+		return freqReport;
+	}
+
+	public static String reportFrequencyes(double[] frequencyis) {
+		StringBuilder sb = new StringBuilder(6 * frequencyis.length);
+		for (int i = frequencyis.length - 1; i >= 0; i--) {
+			int order = (int) frequencyis[i];
+			int preball = (int) (100 * (frequencyis[i] - order) + 0.005);
+			String ball = Serv.normIntX(preball, 2, "0");
+			sb.append(order).append("(").append(ball).append(")").append(" ");
+		}
+		
+		return sb.toString();
+	}
+	
+	public static int[] extractBallSequence(double[] frequencyis) {
+		int[] result = new int[frequencyis.length - 1];
+		for (int j = 1, i = frequencyis.length - 2; i >= 0; j++, i--) {
+			int order = (int) frequencyis[j];
+			result[i] = (int) (100 * (frequencyis[j] - order) + 0.005);
+		}
+		return result;
 	}
 
 	public String reportPlayCombinations() {
