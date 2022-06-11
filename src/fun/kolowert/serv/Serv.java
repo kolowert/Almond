@@ -1,5 +1,7 @@
 package fun.kolowert.serv;
 
+import fun.kolowert.common.GameType;
+
 public class Serv {
 
 	private Serv() {
@@ -51,5 +53,30 @@ public class Serv {
 			System.out.println(normDoubleX(y, 2));
 		}
 	}
-
+	
+	public static String displayPlainHead(GameType gameType, String prefix) {
+		StringBuilder sb = new StringBuilder(prefix);
+		for (int i = 1; i <= gameType.getGameSetSize(); i++) {
+			sb.append(Serv.normIntX(i, 2, "0")).append("|");
+		}
+		return sb.toString();
+	}
+	
+	public static String displayIntArray(int[] input, String prefix) {
+		return displayIntArray(input, prefix, 2, " ", ":", true);
+	}
+	
+	public static String displayIntArray(int[] input, String prefix, int fildSize, String placeHolder, 
+			String columnSeparator, boolean isEmptyWhenZero) {
+		StringBuilder sb = new StringBuilder(prefix);
+		for (int i = 0; i < input.length; i++) {
+			if (input[i] == 0) {
+				sb.append("  ").append(columnSeparator);
+			} else {
+				sb.append(Serv.normIntX(input[i], fildSize, placeHolder)).append(columnSeparator);
+			}
+		}
+		String preResult = sb.toString(); 
+		return preResult.substring(0, preResult.length() - 1);
+	}
 }

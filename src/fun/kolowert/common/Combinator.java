@@ -147,7 +147,7 @@ public class Combinator {
 	
 	public static String reportCombinationsQuantity(int subSet, int superSet) {
 		long combinationsQuantity = calculateCombinations(subSet, superSet);
-		return String.format("%d from %d = %,d combinations%n", subSet, superSet, combinationsQuantity);
+		return String.format("%d from %d = %,d combinations", subSet, superSet, combinationsQuantity);
 	}
 	
 	public static long calculateCombinations(int subSet, int superSet) {

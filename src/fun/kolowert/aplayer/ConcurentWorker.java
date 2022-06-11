@@ -25,15 +25,6 @@ public class ConcurentWorker implements Runnable {
 		this.histOrderResultTab = histOrderResultTab;
 	}
 
-//	public ConcurentWorker(ParamSetA paramSet, List<int[]> histOrderResultTab) {
-//		this.gameType = paramSet.getGameType();
-//		this.playSet = paramSet.getPlaySet();
-//		this.histDeep = paramSet.getHistDeep();
-//		this.histShift = paramSet.getHistShift();
-//		this.reportLimit = paramSet.getReportLimit();
-//		this.histOrderResultTab = histOrderResultTab;
-//	}
-
 	@Override
 	public void run() {
 		int[] histOrder = countHitsOrder();
