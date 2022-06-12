@@ -75,8 +75,7 @@ public class Serv {
 			} else {
 				sb.append(Serv.normIntX(input[i], fildSize, placeHolder)).append(columnSeparator);
 			}
-		}
-		String preResult = sb.toString(); 
-		return preResult.substring(0, preResult.length() - 1);
+		} 
+		return sb.toString();
 	}
 }

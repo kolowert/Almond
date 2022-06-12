@@ -16,26 +16,27 @@ import fun.kolowert.serv.Timer;
 public class APlay {
 
 	private static final GameType GAME_TYPE = GameType.KENO;
+	private static final SortType SORT_TYPE = SortType.ASCENDING;
 	private static final int PLAY_SET = 5;
 	private static final int HIST_DEEP = 40;
-	private static final int HIST_SHIFT = 1;
-	private static final int HIST_SHIFTS = 12;
-	private static final int REPORT_LIMIT = 8_000;
+	private static final int HIST_SHIFT = 62;
+	private static final int HIST_SHIFTS = 30;
+	private static final int REPORT_LIMIT = 10_000;
 
-	private static final int WORKING_THREADS_AMOUNT = 3;
+	private static final int WORKING_THREADS_AMOUNT = 4;
 	
 	private static final String DISPLAY_PREFIX_STUB = "----- |";
 
 	public static void main(String[] args) {
-		System.out.println("* Alpha Play * " + GAME_TYPE.name() + " * " + LocalDate.now());
+		System.out.println("* Alpha Play * " + GAME_TYPE.name() + " SortType:" + SORT_TYPE +  " * " + LocalDate.now());
 
-		ParamSetA paramSet = new ParamSetA(GAME_TYPE, PLAY_SET, HIST_DEEP, HIST_SHIFT, REPORT_LIMIT);
+		ParamSetA paramSet = new ParamSetA(GAME_TYPE, SORT_TYPE, PLAY_SET, HIST_DEEP, HIST_SHIFT, REPORT_LIMIT);
 
 		Timer timer = new Timer();
 
 		APlay aPlay = new APlay();
 
-		aPlay.playOne(true);
+		aPlay.playOne(false);
 
 		aPlay.playMulty(paramSet, true);
 
@@ -59,7 +60,7 @@ public class APlay {
 
 		while (!combinator.isFinished()) {
 			int[] combination = combinator.makeNext();
-			reporter.processCombination(combination);
+			reporter.processCombination(combination, SORT_TYPE);
 		}
 		
 		boolean letDisplayPlayCombinationsReportTab = false;
@@ -144,9 +145,9 @@ public class APlay {
 
 			// do job
 			Thread workingThread = new Thread(
-					new ConcurentWorker(paramSet.getGameType(), paramSet.getPlaySet(), paramSet.getHistDeep(),
-							indexHistShift, paramSet.getReportLimit(), histOrderResultTab),
-					"almond" + indexHistShift);
+					new ConcurentWorker(paramSet.getGameType(), paramSet.getSortType(), paramSet.getPlaySet(), 
+							paramSet.getHistDeep(), indexHistShift, paramSet.getReportLimit(), histOrderResultTab),
+							"almond" + indexHistShift);
 			workingThread.start();
 
 			System.out.print(indexHistShift + ":");
@@ -231,15 +232,15 @@ public class APlay {
 		Reporter reporter = new Reporter(GameType.MAXI, histBox, nextLine, 3);
 
 		List<int[]> combs = new ArrayList<>();
+		combs.add(new int[] { 5, 15, 25, 35, 45 });
 		combs.add(new int[] { 1, 11, 21, 31, 41 });
+		combs.add(new int[] { 9, 16, 26, 36, 46 });
 		combs.add(new int[] { 2, 12, 22, 32, 42 });
 		combs.add(new int[] { 3, 13, 23, 33, 43 });
 		combs.add(new int[] { 4, 14, 24, 34, 44 });
-		combs.add(new int[] { 5, 15, 25, 35, 45 });
-		combs.add(new int[] { 9, 16, 26, 36, 46 });
-
+		
 		for (int[] comb : combs) {
-			reporter.processCombination(comb);
+			reporter.processCombination(comb, SORT_TYPE);
 		}
 
 		String playCombinationsReport = reporter.reportPlayCombinations();

@@ -9,15 +9,17 @@ import fun.kolowert.common.HistHandler;
 public class ConcurentWorker implements Runnable {
 
 	private final GameType gameType;
+	private final SortType sortType;
 	private final int playSet;
 	private final int histDeep;
 	private final int histShift;
 	private final int reportLimit;
 	List<int[]> histOrderResultTab;
 
-	public ConcurentWorker(GameType gameType, int playSet, int histDeep, int histShift, int reportLimit,
-			List<int[]> histOrderResultTab) {
+	public ConcurentWorker(GameType gameType, SortType sortType, int playSet, int histDeep, int histShift,
+			int reportLimit, List<int[]> histOrderResultTab) {
 		this.gameType = gameType;
+		this.sortType = sortType;
 		this.playSet = playSet;
 		this.histDeep = histDeep;
 		this.histShift = histShift;
@@ -39,7 +41,7 @@ public class ConcurentWorker implements Runnable {
 		Combinator combinator = new Combinator(playSet, gameType.getGameSetSize());
 		while (!combinator.isFinished()) {
 			int[] combination = combinator.makeNext();
-			reporter.processCombination(combination);
+			reporter.processCombination(combination, sortType);
 		}
 		double[] frequencyes = reporter.countFrequencyes();
 		int[] ballSequence = Reporter.extractBallSequence(frequencyes);

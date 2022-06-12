@@ -19,6 +19,7 @@ public class Reporter {
 	private List<BigCombination> bigCombinations;
 	private final int combinationsAmountLimit;
 	private int minimalScore;
+	private int maximalScore;
 
 	public Reporter(GameType gameType, List<int[]> histBox, int[] nextLine, int combinationsAmountLimit) {
 		this.gameType = gameType;
@@ -27,9 +28,10 @@ public class Reporter {
 		this.bigCombinations = new ArrayList<>(combinationsAmountLimit + 1);
 		this.combinationsAmountLimit = combinationsAmountLimit;
 		minimalScore = Integer.MAX_VALUE;
+		maximalScore = 0;
 	}
 
-	public void processCombination(int[] combination) {
+	public void processCombination(int[] combination, SortType sortType) {
 		int[] matching = MatchingCalculator.countMatches(combination, histBox);
 		int score = ScoreCouner.countScore(gameType, matching);
 		BigCombination bigCombination = new BigCombination(combination, matching, score);
@@ -37,18 +39,28 @@ public class Reporter {
 		if (bigCombinations.size() < combinationsAmountLimit) {
 			// while list is not full add each..
 			bigCombinations.add(bigCombination);
-			// .. and renew minimal score
+			// .. and renew minimal & maximal score
 			if (minimalScore > score) {
 				minimalScore = score;
 			}
+			if (maximalScore < score) {
+				maximalScore = score;
+			}
 		} else {
-			// when list is full add only if score is big enough
-			if (score > minimalScore) {
+			// when list is full add only if score is big (ASCENDING-type) or small (DESCENDING-type) enough..
+			// .. and rid off line with the smallest of biggest score
+			if (sortType == SortType.ASCENDING && score > minimalScore) {
 				bigCombinations.add(bigCombination);
-				// .. and rid off line with the smallest score
 				Collections.sort(bigCombinations);
 				minimalScore = bigCombinations.get(1).getScore();
 				bigCombinations.remove(0);
+			}
+			if (sortType == SortType.DESCENDING && score < maximalScore) {
+				bigCombinations.add(bigCombination);
+				Collections.sort(bigCombinations);
+				int lastIndex = bigCombinations.size() - 1;
+				maximalScore = bigCombinations.get(lastIndex - 1).getScore();
+				bigCombinations.remove(lastIndex);
 			}
 		}
 
@@ -85,10 +97,10 @@ public class Reporter {
 			String ball = Serv.normIntX(preball, 2, "0");
 			sb.append(order).append("(").append(ball).append(")").append(" ");
 		}
-		
+
 		return sb.toString();
 	}
-	
+
 	public static int[] extractBallSequence(double[] frequencyis) {
 		int[] result = new int[frequencyis.length - 1];
 		for (int j = 1, i = frequencyis.length - 2; i >= 0; j++, i--) {
