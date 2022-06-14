@@ -78,4 +78,38 @@ public class Serv {
 		} 
 		return sb.toString();
 	}
+	
+	public static String displayIntArray(int[] input, int[] rangesMask, String prefix) {
+		return displayIntArray(input, rangesMask, prefix, 2, " ", ":");
+	}
+	
+	public static String displayIntArray(int[] input, int[] rangesMask, String prefix, int fildSize, String placeHolder, 
+				String columnSeparator) {
+		StringBuilder sb = new StringBuilder(prefix);
+		String currentColumnSeparator;
+		for (int i = 0; i < input.length; i++) {
+			if (isInArray(i + 1, rangesMask)) 	{ currentColumnSeparator = "!"; }
+			else 							{ currentColumnSeparator = columnSeparator; }
+			if (input[i] == 0) {
+				sb.append("  ").append(currentColumnSeparator);
+			} else {
+				sb.append(Serv.normIntX(input[i], fildSize, placeHolder)).append(currentColumnSeparator);
+			}
+		} 
+		return sb.toString();
+	}
+	
+	// servant for displayIntArray(..)
+	private static boolean isInArray(int n, int[] arr) {
+		for (int a : arr) {
+			if (a == n) { return true; }
+		}
+		return false;
+	}
+	
+	public static String cut(String input, int tail) {
+		int len = input.length();
+		if (tail > len + 1) { tail = len + 1; }
+		return input.substring(0, len - tail - 1);
+	}
 }

@@ -18,25 +18,31 @@ public class APlay {
 	private static final GameType GAME_TYPE = GameType.KENO;
 	private static final SortType SORT_TYPE = SortType.ASCENDING;
 	private static final int PLAY_SET = 5;
-	private static final int HIST_DEEP = 40;
-	private static final int HIST_SHIFT = 62;
-	private static final int HIST_SHIFTS = 30;
-	private static final int REPORT_LIMIT = 10_000;
+	private static final int HIST_DEEP = 12;
+	private static final int HIST_SHIFT = 1;
+	private static final int HIST_SHIFTS = 16;
+	private static final int REPORT_LIMIT = 8_000;
 
 	private static final int WORKING_THREADS_AMOUNT = 4;
 	
 	private static final String DISPLAY_PREFIX_STUB = "----- |";
+	
+	private static final int[] HIT_RANGE_MASK = { 20, 40, 60, 80 };
+		// { 16, 32, 48, 64, 80 };
+		// { 10, 20, 30, 40, 50, 60, 70, 80 };
+		// { 8, 16, 24, 32, 40, 48, 56, 64, 72, 80 };
+		// { 9, 18, 27, 36, 45 };
 
 	public static void main(String[] args) {
-		System.out.println("* Alpha Play * " + GAME_TYPE.name() + " SortType:" + SORT_TYPE +  " * " + LocalDate.now());
+		System.out.println("* Alpha Play * " + GAME_TYPE.name() + " * SortType:" + SORT_TYPE +  " * " + LocalDate.now());
 
-		ParamSetA paramSet = new ParamSetA(GAME_TYPE, SORT_TYPE, PLAY_SET, HIST_DEEP, HIST_SHIFT, REPORT_LIMIT);
+		ParamSetA paramSet = new ParamSetA(GAME_TYPE, SORT_TYPE, PLAY_SET, HIST_DEEP, HIST_SHIFT, REPORT_LIMIT, HIT_RANGE_MASK);
 
 		Timer timer = new Timer();
 
 		APlay aPlay = new APlay();
 
-		aPlay.playOne(false);
+		aPlay.playOne(true);
 
 		aPlay.playMulty(paramSet, true);
 
@@ -81,7 +87,7 @@ public class APlay {
 		int[] hits = countBallHitsInBallSequence(ballSequence, nextLine);
 		System.out.println(Serv.displayIntArray(hits, "", 2, " ", ":", true));
 
-		System.out.println("\n---------");
+		System.out.println("----------");
 		System.out.println("base Line: " + Arrays.toString(histBox.get(0)));
 		System.out.println("next Line: " + Arrays.toString(nextLine));
 		
@@ -154,7 +160,7 @@ public class APlay {
 
 			// just small pause for smooth running
 			try {
-				Thread.sleep(100);
+				Thread.sleep(175);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -178,30 +184,71 @@ public class APlay {
 		}
 
 		doPostCycleReport(histOrderResultTab, baseNextLineid);
-
+		List<int[]> hitsOnRenges = Assistant.calculateHitsOnRenges(histOrderResultTab, HIT_RANGE_MASK);
+		reportHitsOnRenges(hitsOnRenges, HIT_RANGE_MASK);
+		int zeroesOnHitsOnRenges = countZeroesOnhitsOnRenges(hitsOnRenges);
+		int wholeLinesOnHitsOnRenges = countWholeLinesOnHitsOnRenges(hitsOnRenges);
+		System.out.println("\nzeroesOnHitsOnRenges: " + zeroesOnHitsOnRenges + " / " + hitsOnRenges.size() 
+				+ " >> zero coefficient: # " + Serv.normDoubleX(1.0 * zeroesOnHitsOnRenges / hitsOnRenges.size(), 2) 
+				+ " # >>" + " on params: " + paramSet.toString());
+		System.out.println("WholeLinesOnHitsOnRenges: " + wholeLinesOnHitsOnRenges + " / " + hitsOnRenges.size());
 	}
-
-	private void doPostCycleReport(List<int[]> results, int baseNextLineid) {
+	
+	private int countWholeLinesOnHitsOnRenges(List<int[]> hitsOnRenges) {
+		int counter = 0;
+		for (int[] line : hitsOnRenges) {
+			++counter;
+			for (int n : line) {
+				if (n == 0) {
+					--counter;
+					break;
+				}
+			}
+		}
+		return counter;
+	}
+	
+	private int countZeroesOnhitsOnRenges(List<int[]> hitsOnRenges) {
+		int counter = 0;
+		for (int[] line : hitsOnRenges) {
+			for (int n : line) {
+				if (n == 0) {
+					++counter;
+				}
+			}
+		}
+		return counter;
+	}
+	
+	private void doPostCycleReport(List<int[]> histOrderResultTab, int baseNextLineid) {
 		System.out.println();
 		System.out.println("histOrderResultTab");
 		System.out.println(Serv.displayPlainHead(GAME_TYPE, DISPLAY_PREFIX_STUB));
-		int counter = results.size() - 1;
-		for (int[] hits : results) {
-			System.out.println(Serv.displayIntArray(hits, Serv.normIntX(baseNextLineid - counter--, 5, "0") + " |"));
+		int counter = histOrderResultTab.size() - 1;
+		for (int[] hits : histOrderResultTab) {
+			System.out.println(Serv.displayIntArray(hits, HIT_RANGE_MASK, Serv.normIntX(baseNextLineid - counter--, 5, "0") + " |"));
 		}
 		
-		int[] histOrderResultTabSum = new int[results.get(0).length];
-		for (int[] hits : results) {
+		int[] histOrderResultTabSum = new int[histOrderResultTab.get(0).length];
+		for (int[] hits : histOrderResultTab) {
 			for (int i = 0; i < hits.length; i++) {
 				histOrderResultTabSum[i] += hits[i];
 			}
 		}
-		
-		System.out.println("Sum of histOrderResultTab");
+		System.out.println("\nSum of histOrderResultTab");
 		System.out.println(Serv.displayPlainHead(GAME_TYPE, DISPLAY_PREFIX_STUB));
-		System.out.println(Serv.displayIntArray(histOrderResultTabSum, DISPLAY_PREFIX_STUB));
+		System.out.println(Serv.displayIntArray(histOrderResultTabSum, HIT_RANGE_MASK, DISPLAY_PREFIX_STUB));
+	}
+	
+	private void reportHitsOnRenges(List<int[]> hitsOnRenges, int[] hitsMask) {
+		System.out.println("\nHits On Renges");
+		Assistant.displayRangesHead(hitsMask);
+		Assistant.displayTab(hitsOnRenges);
+		System.out.println("Sum");
+		Assistant.displayHitsOnRangesResume(hitsOnRenges, hitsMask);
 	}
 
+	
 	
 	private int countWorkingThreds(String namePrefix) {
 		Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
